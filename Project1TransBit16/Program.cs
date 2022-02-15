@@ -53,30 +53,29 @@ namespace Project1TransBit16
           
             bool invalid = false;
             string input = "";
-            RequestHandler req = new RequestHandler();
+            RequestHandler req = new RequestHandler(stat);
             subMenu(fileName);
             do
             {
                 input = Console.ReadLine();
                 if (input == "1") { stat.DisplayCityInformation(); return; }
-                if (input == "2") { req.provinceCityHandler(stat);return; }
-                if (input == "3") { req.largestCityHandler(stat); return; }
-                if (input == "4") { req.smallestCityHandler(stat);return; }
-                if (input == "5") { req.compareCityHandler(stat);return; }
-                if (input == "6") { req.cityonMap(stat); return; }
-                if (input == "7") { req.DistanceHandler(stat); return; }
-                if (input == "8") { req.ProvincePopHandler(stat); return; }
-                if (input == "9") { req.RankProvincePopHandler(stat); return; }
-                if (input == "10") { req.RankProvByCityHandler(stat); return; }
-                if (input == "11") { req.provinceCapHandler(stat); return; }
+                if (input == "2") { req.provinceCityHandler();return; }
+                if (input == "3") { req.largestCityHandler(); return; }
+                if (input == "4") { req.smallestCityHandler();return; }
+                if (input == "5") { req.compareCityHandler();return; }
+                if (input == "6") { req.cityonMap(); return; }
+                if (input == "7") { req.DistanceHandler(); return; }
+                if (input == "8") { req.ProvincePopHandler(); return; }
+                if (input == "9") { req.RankProvincePopHandler(); return; }
+                if (input == "10") { req.RankProvByCityHandler(); return; }
+                if (input == "11") { req.provinceCapHandler(); return; }
                 if (input == "12") { Main(new string[0]); return; }
                 if (input == "exit") { System.Environment.Exit(0); }
                 invalid = true;
                 Console.WriteLine("Error! : Enter a valid option.");
 
             } while (invalid);
-          
-
+         
         }
         public static Statistics GetStatistics(ref string fileName)
         {

@@ -8,8 +8,14 @@ namespace Project1TransBit16
 {
     public class RequestHandler
     {
+        Statistics stat = null;
 
-        public void provinceCityHandler(Statistics stat)
+        public RequestHandler(Statistics stat)
+        {
+            this.stat = stat;
+        }
+
+        public void provinceCityHandler()
         {
             List<CityInfo> cities = new List<CityInfo>();
             string provinceName = "";
@@ -31,7 +37,7 @@ namespace Project1TransBit16
 
 
 
-        public void largestCityHandler(Statistics stat)
+        public void largestCityHandler()
         {
             CityInfo city = new CityInfo();
             string provinceName = "";
@@ -56,7 +62,7 @@ namespace Project1TransBit16
 
 
 
-        public void smallestCityHandler(Statistics stat)
+        public void smallestCityHandler()
         {
             CityInfo city = new CityInfo();
             string provinceName = "";
@@ -79,37 +85,37 @@ namespace Project1TransBit16
             } while (invalid);
         }
 
-        public void compareCityHandler(Statistics stat)
+        public void compareCityHandler()
         {
 
         }
 
-        public void cityonMap(Statistics stat)
+        public void cityonMap()
         {
 
         }
 
-        public void DistanceHandler(Statistics stat)
+        public void DistanceHandler()
         {
 
         }
 
-        public void ProvincePopHandler(Statistics stat)
+        public void ProvincePopHandler()
         {
 
         }
 
-        public void RankProvincePopHandler(Statistics stat)
+        public void RankProvincePopHandler()
         {
 
         }
 
-        public void RankProvByCityHandler(Statistics stat)
+        public void RankProvByCityHandler()
         {
 
         }
 
-        public void provinceCapHandler(Statistics stat)
+        public void provinceCapHandler()
         {
 
         }

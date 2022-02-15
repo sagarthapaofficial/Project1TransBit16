@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Project1TransBit16
 {
@@ -58,12 +59,12 @@ namespace Project1TransBit16
             do
             {
                 input = Console.ReadLine();
-                if (input == "1") { stat.DisplayCityInformation(); return; }
+                if (input == "1") { stat.DisplayCityInformation().ToString(); return; }
                 if (input == "2") { req.provinceCityHandler();return; }
                 if (input == "3") { req.largestCityHandler(); return; }
                 if (input == "4") { req.smallestCityHandler();return; }
                 if (input == "5") { req.compareCityHandler();return; }
-                if (input == "6") { req.cityonMap(); return; }
+                if (input == "6") { stat.ShowCityOnMap(); return; }
                 if (input == "7") { req.DistanceHandler(); return; }
                 if (input == "8") { req.ProvincePopHandler(); return; }
                 if (input == "9") { req.RankProvincePopHandler(); return; }
@@ -105,10 +106,13 @@ namespace Project1TransBit16
             Statistics stat = null;
             string fileName = "";
             stat = GetStatistics(ref fileName);
-            
+            Stopwatch watch = new Stopwatch();
             while (true)
             {
+                watch.Start();
                 DisplayCountryInfo(ref stat, ref fileName);
+                watch.Stop();
+                Console.WriteLine(watch.Elapsed);
                 Console.WriteLine("Hit Enter key if you want to continue quering.");
                 Console.ReadLine();
             }

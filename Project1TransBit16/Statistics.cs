@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Device.Location;
 
 namespace Project1TransBit16
 {
@@ -12,6 +15,11 @@ namespace Project1TransBit16
         //Dictionary that holds the cities information returned from the DataModeler class.
         public Dictionary<string, CityInfo> CityCatalogue;
         public List<CityInfo> resultCityList =null;
+        public static string Api= "AIzaSyDREvoNKPF3ZEvaIdxavFqU2emfxdP9CSM";
+        public static string keyValue = $"https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key={Api}";
+
+        private static readonly HttpClient client = new HttpClient();
+
 
         public Statistics(string filename, string fileType)
         {
@@ -19,45 +27,38 @@ namespace Project1TransBit16
             CityCatalogue=DataModeller.ParseFile(filename+fileType);
         }
 
-        public static bool validateData(string data, ref List<string>loadData)
+        public CityInfo DisplayCityInformation()
         {
-            loadData=data.Split(" ").ToList();
-            if (loadData.Count != 2) return false;
-
-            return true;
-        }
-        public void DisplayCityInformation()
-        {
-            //returns all the city stored information in the cityCatalogue.
-            //or could ask the user to select a particular city
-
             string data = "";
-            bool Isvalid=false;
+            bool Isvalid = false;
             List<string> loadData = new List<string>();
+            CityInfo city = null;
             do
             {
                 Console.WriteLine("Enter the city and province name separated by space ( )");
                 data = Console.ReadLine();
-                Isvalid = validateData(data, ref loadData);
+                loadData = data.Split(" ").ToList();
 
-                if (Isvalid)
+                foreach (var c in CityCatalogue)
                 {
-                    foreach (var city in CityCatalogue)
-                    {
-                        if (city.Key.Equals(loadData[0]) && city.Value.admin_name.Equals(loadData[1]))
-                        {
-                            Isvalid = true;
-                            Console.WriteLine(city.Value.ToString());
-                            return;
 
+                    if (loadData.Count == 2)
+                    {
+                        if (c.Key.Equals(loadData[0]) && c.Value.admin_name.Equals(loadData[1]))
+                        {
+                            return city = c.Value;
+                            
+                            
                         }
+
                     }
-                    Isvalid = false;
-                    Console.WriteLine("Error !: The city or province does not exist");
                 }
+                Isvalid = false;
+                Console.WriteLine("Error !: The city or province does not exist");
+
             } while (!Isvalid);
 
-
+            return city;
         }
 
         public List<CityInfo> DisplayProvinceCities(string province)
@@ -96,14 +97,15 @@ namespace Project1TransBit16
 
         public CityInfo DisplaySmallestPopulationCity(string provinceName)
         {
-            CityInfo smallPopcity = new CityInfo();
-            smallPopcity.population = Double.MaxValue;
-          
+            CityInfo smallPopcity = null;
+            double population = Double.MaxValue;
+                
             foreach (var city in CityCatalogue)
             {
-                if (smallPopcity.population > city.Value.population && city.Value.admin_name.Equals(provinceName))
+                if (population > city.Value.population && city.Value.admin_name.Equals(provinceName))
                 {
                     smallPopcity = city.Value;
+                    population = city.Value.population;
                 }
 
             }
@@ -111,23 +113,40 @@ namespace Project1TransBit16
             return smallPopcity;
         }
 
-        public CityInfo CompareCitiesPopulation(CityInfo city1, CityInfo city2)
+        public void CompareCitiesPopulation(CityInfo city1, CityInfo city2)
         {
-            return new CityInfo();
+            if (city1.population > city2.population)
+            {
+                    Console.WriteLine( city1.ToString());     
+            }else
+            {
+                Console.WriteLine(city2.ToString());
+            }
+            Console.WriteLine($"City1: {city1.city} population: {city1.population}");
+            Console.WriteLine($"City2: {city1.city} population: {city2.population}");
+
         }
 
         //Use the name of the city and province to mark a city on the map.
         public void ShowCityOnMap()
         {
 
+            CityInfo city = DisplayCityInformation();
+            Console.WriteLine($"Link to view city on Map: https://www.latlong.net/c/?lat={city.lat}&long={city.lng}");
+
         }
 
-        public int CalculateDistanceBetweenCities(CityInfo city1, CityInfo city2)
+        public void CalculateDistanceBetweenCities(CityInfo city1, CityInfo city2)
         {
-            // use google api to find the distance between two country.
-            return 0;
+            var sCoord = new GeoCoordinate(city1.lat, city1.lng);
+            var eCoord = new GeoCoordinate(city2.lat, city2.lng);
+            const double metertokm = 0.001;
+
+             Console.WriteLine($"{Math.Round(sCoord.GetDistanceTo(eCoord)* metertokm)} km");
+
         }
 
+      
 
 
 

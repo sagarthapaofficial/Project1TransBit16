@@ -163,7 +163,7 @@ namespace Project1TransBit16
 
         public void ProvincePopHandler()
         {
-
+            
         }
 
         public void RankProvincePopHandler()

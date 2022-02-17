@@ -45,7 +45,7 @@ namespace Project1TransBit16
             Console.WriteLine("10)  Rank Provinces By Cities");
             Console.WriteLine("11) Get Capital of Province");
             Console.WriteLine("12) Restart Program And Choose Another File or File Type To Query");
-
+            Console.WriteLine("exit) Exit the program");
         }
 
    

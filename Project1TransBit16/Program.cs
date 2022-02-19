@@ -66,10 +66,10 @@ namespace Project1TransBit16
                 if (input == "5") { req.compareCityHandler();return; }
                 if (input == "6") { stat.ShowCityOnMap(); return; }
                 if (input == "7") { req.DistanceHandler(); return; }
-                if (input == "8") { req.ProvincePopHandler(); return; }
-                if (input == "9") { req.RankProvincePopHandler(); return; }
-                if (input == "10") { req.RankProvByCityHandler(); return; }
-                if (input == "11") { req.provinceCapHandler(); return; }
+                if (input == "8") { req.DisplayProvincePopulationHandler(); return; }
+                if (input == "9") { req.RankProvincesByPopulationHandler(); return; }
+                if (input == "10") { req.RankProvincesByNumCitiesHandler(); return; }
+                if (input == "11") { req.GetCapitalHandler(); return; }
                 if (input == "12") { Main(new string[0]); return; }
                 if (input == "exit") { System.Environment.Exit(0); }
                 invalid = true;
@@ -113,7 +113,7 @@ namespace Project1TransBit16
                 DisplayCountryInfo(ref stat, ref fileName);
                 watch.Stop();
                 Console.WriteLine(watch.Elapsed);
-                Console.WriteLine("Hit Enter key if you want to continue quering.");
+                Console.WriteLine("Hit Enter key if you want to continue querying.");
                 Console.ReadLine();
             }
         }

@@ -54,6 +54,14 @@ namespace Project1TransBit16
        
         public  string id { get; set; }
 
+
+        public delegate void CityPopulationChangeHandler(object source, PopulationChangeEvent e);
+        public event CityPopulationChangeHandler CityPopulationChange;
+        protected virtual void OnPopulationChange(PopulationChangeEvent e)
+        {
+            CityPopulationChange.Invoke(this, e);
+        }
+
         public override string ToString()
         {
             return $"City: {city}, city_Ascii:{city_ascii}, Latitude: {lat}, Longitude: {lng}, Country: {country}, Province: {admin_name}, Population: {population}, Capital: {capital}";

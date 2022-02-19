@@ -14,7 +14,7 @@ namespace Project1TransBit16
     public class Statistics
     {
         //Dictionary that holds the cities information returned from the DataModeler class.
-        public Dictionary<string, CityInfo> CityCatalogue;
+        public Dictionary<string, CityInfo> CityCatalogue; //ISSUE: citycatalogue is missing a few cities. 248 in catalogue, 252 actual
         public List<CityInfo> resultCityList =null;
         public static string Api= "AIzaSyDREvoNKPF3ZEvaIdxavFqU2emfxdP9CSM";
         public static string keyValue = $"https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key={Api}";
@@ -125,10 +125,11 @@ namespace Project1TransBit16
 //--Province Methods--//
         public double DisplayProvincePopulation(string provinceName)
         {
+
             double population = 0;
 
             var citiesInProvince = from city in CityCatalogue
-                                   where city.Value.admin_name.Equals(provinceName)
+                                   where city.Value.admin_name.ToLower().Equals(provinceName.ToLower())
                                    select city;
 
             foreach (var city in citiesInProvince)
@@ -140,7 +141,7 @@ namespace Project1TransBit16
         }
         public List<CityInfo> DisplayProvinceCities(string provinceName)
         {
-            
+            //citycatalogue is missing 3 or 4 cities
             var citiesInProvince = from city in CityCatalogue
                                    where city.Value.admin_name.Equals(provinceName)
                                    select city;
@@ -158,10 +159,10 @@ namespace Project1TransBit16
         public void RankProvincesByPopulation()
         {
             //get all distinct provinces from citycatalogue. result should be an enumerable of string
-            var distinctProvinces = from city in CityCatalogue
-                                    select city.Value.admin_name.Distinct();
+            var distinctProvinces = (from city in CityCatalogue
+                                     select city.Value.admin_name).Distinct();
 
-            //this will hold our final results
+
             Dictionary<string, double> provinceAndPop = new Dictionary<string, double>();
 
             //for each of the distinct provinces
@@ -182,28 +183,49 @@ namespace Project1TransBit16
                 provinceAndPop.Add(province.ToString(), pop);
             }
 
-            //sort the resulting list by pop
-            var ranked = from entry in provinceAndPop
-                             orderby entry.Value ascending
-                             select entry;
-
-            //assign back to original dictionary
-            provinceAndPop = (Dictionary<string, double>)ranked;
-
-            //print it out (should this instead be returned?)
+            //ideally we'd want to use a sorted set, but that sorts on key only. 
+            //SortedDictionary<string, double> sortedProvincesByPop = new SortedDictionary<string, double>(provinceAndPop);
+            int i = 1;
             Console.WriteLine("Provinces ranked by population:\n");
-            foreach (var province in provinceAndPop)
+            foreach (var province in provinceAndPop.OrderByDescending(key => key.Value))
             {
-                Console.WriteLine(province.Key + ":  " + province.Value);
+                Console.WriteLine($"{i++}. {province.Key}:  {province.Value}");
             }
         }
 
-        //test me
+        public void RankProvincesByCities()
+        {
+            //get all distinct provinces from citycatalogue. result should be an enumerable of string
+            var distinctProvinces = (from city in CityCatalogue
+                                    select city.Value.admin_name).Distinct();
+
+            Dictionary<string, int> provinceAndNumCities = new Dictionary<string, int>();
+
+            //there is probably a better performing way to do this than querying entire set for every result of our prior query... it's probably really bad time complexity
+            foreach (var province in distinctProvinces)
+            {
+                int citiesCountForProvince = (from city in CityCatalogue
+                                              where city.Value.admin_name.Equals(province)
+                                              select city).Count();
+
+                provinceAndNumCities.Add(province.ToString(), citiesCountForProvince);
+            }
+
+
+            Console.WriteLine("Provinces ranked by number of cities:\n");
+            int i = 1;
+            foreach (var provinceNumCombo in provinceAndNumCities.OrderByDescending(key => key.Value))
+            {
+                Console.WriteLine($"{i++}.    {provinceNumCombo.Key}:   {provinceNumCombo.Value}");
+            }
+        }
+
         public CityInfo GetCapital (string provinceName)
         {
+            //!string.IsNullOrEmpty(city.Value.capital) 
             var capital =          from city in CityCatalogue
-                                   where city.Value.admin_name.Equals(provinceName)
-                                            && !string.IsNullOrEmpty(city.Value.capital)
+                                   where city.Value.admin_name.ToLower().Equals(provinceName)
+                                            && city.Value.capital.Equals("admin")
                                    select city.Value;
 
             return capital.FirstOrDefault();

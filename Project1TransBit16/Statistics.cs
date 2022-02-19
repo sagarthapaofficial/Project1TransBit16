@@ -13,8 +13,10 @@ namespace Project1TransBit16
     /* Enables the user to retrieve all information about the stored cities in the Dictionary generic type.*/
     public class Statistics
     {
+        //ISSUE: citycatalogue is missing a few cities. 252 actual, 248 in csv and xml, 249 in json
+
         //Dictionary that holds the cities information returned from the DataModeler class.
-        public Dictionary<string, CityInfo> CityCatalogue; //ISSUE: citycatalogue is missing a few cities. 248 in catalogue, 252 actual
+        public Dictionary<string, CityInfo> CityCatalogue; 
         public List<CityInfo> resultCityList =null;
         public static string Api= "AIzaSyDREvoNKPF3ZEvaIdxavFqU2emfxdP9CSM";
         public static string keyValue = $"https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key={Api}";

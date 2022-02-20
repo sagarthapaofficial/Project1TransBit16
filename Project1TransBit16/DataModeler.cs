@@ -49,9 +49,9 @@ namespace Project1TransBit16
             }
             foreach (var getlist in list)
             {
-                if (!Citydictionary.ContainsKey(getlist.city))
+                if (!Citydictionary.ContainsKey(getlist.city_ascii))
                 {
-                    Citydictionary.Add(getlist.city, getlist);
+                    Citydictionary.Add(getlist.city_ascii, getlist);
                 }
             }
             return Citydictionary;
@@ -66,9 +66,9 @@ namespace Project1TransBit16
 
             foreach (var getlist in list)
             {
-                if (!Citydictionary.ContainsKey(getlist.city))
+                if (!Citydictionary.ContainsKey(getlist.city_ascii))
                 {
-                    Citydictionary.Add(getlist.city, getlist);
+                    Citydictionary.Add(getlist.city_ascii, getlist);
                 }
             }
             return Citydictionary;
@@ -89,9 +89,9 @@ namespace Project1TransBit16
 
             foreach (var getlist in cityInfo)
             {
-                if (!Citydictionary.ContainsKey(getlist.city))
+                if (!Citydictionary.ContainsKey(getlist.city_ascii))
                 {
-                    Citydictionary.Add(getlist.city, getlist);
+                    Citydictionary.Add(getlist.city_ascii, getlist);
                 }
             }
             return Citydictionary;

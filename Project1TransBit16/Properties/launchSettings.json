@@ -2,7 +2,7 @@
   "profiles": {
     "Project1TransBit16": {
       "commandName": "Project",
-      "workingDirectory": "..\\"
+      "workingDirectory": "..\\Project1TransBit16\\"
     }
   }
 }

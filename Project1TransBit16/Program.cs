@@ -42,9 +42,10 @@ namespace Project1TransBit16
             Console.WriteLine("7)  Calculate Distance Between Cities");
             Console.WriteLine("8)  Display Province Population");
             Console.WriteLine("9)  Rank Provinces By Population");
-            Console.WriteLine("10)  Rank Provinces By Cities");
+            Console.WriteLine("10) Rank Provinces By Cities");
             Console.WriteLine("11) Get Capital of Province");
-            Console.WriteLine("12) Restart Program And Choose Another File or File Type To Query");
+            Console.WriteLine("12) Update the population for a city");
+            Console.WriteLine("13) Restart Program And Choose Another File or File Type To Query");
             Console.WriteLine("exit) Exit the program");
         }
 
@@ -70,7 +71,8 @@ namespace Project1TransBit16
                 if (input == "9") { req.RankProvincesByPopulationHandler(); return; }
                 if (input == "10") { req.RankProvincesByNumCitiesHandler(); return; }
                 if (input == "11") { req.GetCapitalHandler(); return; }
-                if (input == "12") { Main(new string[0]); return; }
+                if (input == "12") { req.UpdatePopulationForCityHandler(); return; }
+                if (input == "13") { Main(new string[0]); return; }
                 if (input == "exit") { System.Environment.Exit(0); }
                 invalid = true;
                 Console.WriteLine("Error! : Enter a valid option.");

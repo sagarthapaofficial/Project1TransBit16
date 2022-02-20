@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Device.Location;
 using System.IO;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
+using CsvHelper;
 
 namespace Project1TransBit16
 {
@@ -27,7 +30,7 @@ namespace Project1TransBit16
         public Statistics(string filename, string fileType)
         {
             DataModeler < Dictionary<string, CityInfo> >DataModeller= new DataModeler<Dictionary<string, CityInfo>>();
-            CityCatalogue=DataModeller.ParseFile(Directory.GetCurrentDirectory() + "/data/" + filename+fileType);
+            CityCatalogue=DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\" + filename+fileType);
         }
 
 //--City Methods--//
@@ -77,16 +80,16 @@ namespace Project1TransBit16
         }
         public void CompareCitiesPopulation(CityInfo city1, CityInfo city2)
         {
-            if (city1.population > city2.population)
-            {
-                Console.WriteLine(city1.ToString());
-            }
-            else
-            {
-                Console.WriteLine(city2.ToString());
-            }
+            //if (city1.population > city2.population)
+            //{
+            //    Console.WriteLine(city1.ToString());
+            //}
+            //else
+            //{
+            //    Console.WriteLine(city2.ToString());
+            //}
             Console.WriteLine($"City1: {city1.city} population: {city1.population}");
-            Console.WriteLine($"City2: {city1.city} population: {city2.population}");
+            Console.WriteLine($"City2: {city2.city} population: {city2.population}");
         }
 
         //Use the name of the city and province to mark a city on the map.
@@ -235,7 +238,58 @@ namespace Project1TransBit16
 
 
 
+//--Write Out--//
+        public void WriteToCSV()
+        {
+            try
+            {
+                //problem here - column order different from source and not handling diacritics. 
+                //have not tested reading these files back in
+                using (var writer = new StreamWriter(Directory.GetCurrentDirectory() + "\\data\\test.csv"))
+                using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.CurrentCulture))
+                {
+                    csv.WriteRecords(CityCatalogue.Values.ToList());
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Environment.Exit(1);
+            }
+        }
 
+        public void WriteToJSON()
+        {
+            try
+            {
+                //have not tested reading these files back in
+                string payload = JsonConvert.SerializeObject(CityCatalogue.Values);
+                StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\test.json");
+                file.Write(payload);
+                file.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Environment.Exit(1);
+            }
+        }
 
+        public void WriteToXML()
+        {
+            try
+            {
+                //have not tested reading these files back in
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<CityInfo>));
+                FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\test.xml");
+                xmlSerializer.Serialize(file, CityCatalogue.Values.ToList());
+                file.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Environment.Exit(1);
+            }
+        }
     }
 }

@@ -105,7 +105,6 @@ namespace Project1TransBit16
                 string[] cities = word.Split(" ");
 
                 //it would be nice if this input was case-insensitive
-                //it also currently does not handle quebec cities (with diacritics etc)  - need to leverage city_ascii value 
 
                 if (stat.CityCatalogue.ContainsKey(cities[0]) && stat.CityCatalogue.ContainsKey(cities[1]))
                 {
@@ -144,7 +143,6 @@ namespace Project1TransBit16
 
 
             //it would be nice if this input was case-insensitive
-            //it also currently does not handle quebec cities (with diacritics etc) - need to leverage city_ascii value 
 
             do
             { 
@@ -274,6 +272,85 @@ namespace Project1TransBit16
                     Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
                 }
             }
+        }
+
+
+        public void UpdatePopulationForCityHandler()
+        {
+            //get file type for write out
+            int filetype = 0;
+            bool validFiletype = false;
+            while (!validFiletype)
+            {
+                Console.WriteLine("Which of the following file extensions would you like to write to?");
+                Console.WriteLine("1) .CSV");
+                Console.WriteLine("2) .JSON");
+                Console.WriteLine("3) .XML");
+                filetype = 0;
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out filetype))
+                    if (filetype >= 1 && filetype <= 3)
+                        break;
+
+                Console.WriteLine("Invalid input. Please try again");
+            }
+
+            //get city to overwrite
+            CityInfo cityToChange = null;
+            bool validCity = false;
+            while (!validCity)
+            {
+                Console.WriteLine("Enter a city name to update its population:");
+                string input = Console.ReadLine();
+
+                cityToChange = (from cityy in stat.CityCatalogue
+                                where cityy.Value.city_ascii.ToLower() == input.ToLower()
+                                select cityy.Value).Single();
+
+                if (cityToChange != null)
+                {
+                    validCity = true;
+                }
+            }
+
+            //get new pop
+            double newPopulation = 0;
+            bool validPop = false;
+            while (!validPop)
+            {
+                Console.WriteLine($"{cityToChange.city} current population: {cityToChange.population}\nEnter new population:");
+                string input = Console.ReadLine();
+                newPopulation = 0;
+
+                if (double.TryParse(input, out newPopulation) && newPopulation >= 0)
+                {
+                    validPop = true;
+                }
+                else
+                {
+                    Console.WriteLine("New population entered was negative or not a number. Please try again.");
+                }
+            }
+
+            //update pop in list. changing this object affects the list
+            cityToChange.population = newPopulation;
+
+            //write out new city to file, do event thing
+            switch (filetype)
+            {
+                case 1:
+                    stat.WriteToCSV();
+                    break;
+                case 2:
+                    stat.WriteToJSON();
+                    break;
+                case 3:
+                    stat.WriteToXML();
+                    break;
+
+            }
+            
         }
     }
 }

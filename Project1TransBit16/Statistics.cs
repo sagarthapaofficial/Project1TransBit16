@@ -23,7 +23,7 @@ namespace Project1TransBit16
         //Dictionary that holds the cities information returned from the DataModeler class.
         public Dictionary<string, CityInfo> CityCatalogue; 
         public List<CityInfo> resultCityList =null;
-        public static string ApiKey= "5b3ce3597851110001cf624842d0804e6a864305a35699c60b2ede2d";
+        public readonly string ApiKey= "5b3ce3597851110001cf624842d0804e6a864305a35699c60b2ede2d";
 
         private static readonly HttpClient client = new HttpClient();
 
@@ -34,7 +34,10 @@ namespace Project1TransBit16
             CityCatalogue=DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\" + filename+fileType);
         }
 
-//--City Methods--//
+        /// <summary>
+        /// /
+        /// </summary>
+        /// <returns></returns>
         public CityInfo DisplayCityInformation()
         {
             string data = "";
@@ -43,9 +46,9 @@ namespace Project1TransBit16
             CityInfo city = null;
             do
             {
-                Console.WriteLine("Enter the city and province name separated by space ( )");
+                Console.WriteLine("Enter the city and province name separated by comma (,)");
                 data = Console.ReadLine();
-                loadData = data.Split(" ").ToList();
+                loadData = data.Split(",").ToList();
 
                 if (loadData[1] == "quebec" || loadData[1] == "Quebec")
                     loadData[1] = "Québec";
@@ -70,7 +73,11 @@ namespace Project1TransBit16
             return city;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provinceName"></param>
+        /// <returns></returns>
         public CityInfo DisplayLargestPopulationCity(string provinceName)
         {
             CityInfo Populouscity = new CityInfo();
@@ -85,6 +92,12 @@ namespace Project1TransBit16
             }
             return Populouscity;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="city1"></param>
+        /// <param name="city2"></param>
         public void CompareCitiesPopulation(CityInfo city1, CityInfo city2)
         {
             if (city1.population > city2.population)
@@ -99,6 +112,10 @@ namespace Project1TransBit16
             Console.WriteLine($"City2: {city2.city} population: {city2.population}");
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         //Use the name of the city and province to mark a city on the map.
         public void ShowCityOnMap()
         {
@@ -117,7 +134,11 @@ namespace Project1TransBit16
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="city1"></param>
+        /// <param name="city2"></param>
         public async void CalculateDistanceBetweenCities(CityInfo city1, CityInfo city2)
         {
             //Api version
@@ -127,7 +148,7 @@ namespace Project1TransBit16
             HttpClient client = new HttpClient();
             string responseBody = await client.GetStringAsync(url);
             JObject obj = JObject.Parse(responseBody);
-
+           
             //NOw get the distance value from the JObject
             double distance = (double)(obj["features"][0]["properties"]["summary"]["distance"]);
             Console.WriteLine($"Distance Between {city1.city_ascii}, {city1.admin_name} to {city2.city_ascii}, {city2.admin_name} is {Math.Round(distance*meterToKm)} km.");
@@ -140,6 +161,12 @@ namespace Project1TransBit16
 
             //    Console.WriteLine($"{Math.Round(sCoord.GetDistanceTo(eCoord) * metertokm)} km");
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provinceName"></param>
+        /// <returns></returns>
         public CityInfo DisplaySmallestPopulationCity(string provinceName)
         {
             CityInfo smallPopcity = null;
@@ -159,6 +186,11 @@ namespace Project1TransBit16
 
 
 //--Province Methods--//
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provinceName"></param>
+        /// <returns></returns>
         public double DisplayProvincePopulation(string provinceName)
         {
 
@@ -175,6 +207,13 @@ namespace Project1TransBit16
 
             return population;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provinceName"></param>
+        /// <returns></returns>
         public List<CityInfo> DisplayProvinceCities(string provinceName)
         {
             //citycatalogue is missing 3 or 4 cities
@@ -191,7 +230,9 @@ namespace Project1TransBit16
             return list;
         }
 
-        //test me
+        /// <summary>
+        /// 
+        /// </summary>
         public void RankProvincesByPopulation()
         {
             //get all distinct provinces from citycatalogue. result should be an enumerable of string
@@ -233,6 +274,10 @@ namespace Project1TransBit16
 
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void RankProvincesByCities()
         {
             //get all distinct provinces from citycatalogue. result should be an enumerable of string
@@ -265,6 +310,11 @@ namespace Project1TransBit16
             Console.WriteLine($"{data}");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="provinceName"></param>
+        /// <returns></returns>
         public CityInfo GetCapital (string provinceName)
         {
             //!string.IsNullOrEmpty(city.Value.capital) 
@@ -277,7 +327,7 @@ namespace Project1TransBit16
         }
 
 
-//--Write Out--//
+        //--Write Out--//
         public void WriteToCSV()
         {
             try

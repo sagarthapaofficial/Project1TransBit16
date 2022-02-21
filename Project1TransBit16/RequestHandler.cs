@@ -235,21 +235,7 @@ namespace Project1TransBit16
 
             //get city to overwrite
             CityInfo cityToChange = null;
-            bool validCity = false;
-            while (!validCity)
-            {
-                Console.WriteLine("Enter a city name to update its population:");
-                string input = Console.ReadLine();
-
-                cityToChange = (from cityy in stat.CityCatalogue
-                                where cityy.Value.city_ascii.ToLower() == input.ToLower()
-                                select cityy.Value).Single();
-
-                if (cityToChange != null)
-                {
-                    validCity = true;
-                }
-            }
+            cityToChange=stat.DisplayCityInformation();
 
             //get new pop
             double newPopulation = 0;

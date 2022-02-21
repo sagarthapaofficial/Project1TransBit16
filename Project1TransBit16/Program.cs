@@ -46,7 +46,7 @@ namespace Project1TransBit16
             Console.WriteLine("11) Get Capital of Province");
             Console.WriteLine("12) Update the population for a city");
             Console.WriteLine("13) Restart Program And Choose Another File or File Type To Query");
-            Console.WriteLine("exit) Exit the program");
+            Console.WriteLine("Enter 'exit' to Exit the program");
         }
 
    
@@ -111,7 +111,7 @@ namespace Project1TransBit16
             while (true)
             {
                 DisplayCountryInfo(ref stat, ref fileName);
-                Console.ReadLine();
+                Console.Read();
             }
         }
     }

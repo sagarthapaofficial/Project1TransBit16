@@ -10,6 +10,15 @@ namespace Project1TransBit16
     {
         Statistics stat = null;
 
+        //Delegate and event handler
+
+        public delegate void Del(Object source, PopulationChangeEvent ev);
+        //event handler
+        public event Del PopHandler;
+
+        //Instantiation of the cityPopulationChangeEvent
+        PopulationChangeEvent popEvent = null;
+
         public RequestHandler(Statistics stat)
         {
             this.stat = stat;
@@ -217,6 +226,10 @@ namespace Project1TransBit16
             //get file type for write out
             int filetype = 0;
             bool validFiletype = false;
+
+            //Assigning the subscriber method to the publisher.
+            PopHandler += PopulationChangeEvent.NotifyUser;
+
             while (!validFiletype)
             {
                 Console.WriteLine("Which of the following file extensions would you like to write to?");
@@ -256,8 +269,9 @@ namespace Project1TransBit16
                 }
             }
 
-            //update pop in list. changing this object affects the list
-            cityToChange.population = newPopulation;
+            popEvent = new PopulationChangeEvent(cityToChange.population, newPopulation);
+
+         
 
             //write out new city to file, do event thing
             switch (filetype)
@@ -273,7 +287,18 @@ namespace Project1TransBit16
                     break;
 
             }
-            
+
+            //fires the event
+            eventFired(popEvent);
+            //update pop in list. changing this object affects the list
+            cityToChange.population = newPopulation;
+
+        }
+
+        //Passes to the event handler
+        protected virtual void eventFired(PopulationChangeEvent data)
+        {
+            if (PopHandler != null) PopHandler.Invoke(this, data);
         }
     }
 }

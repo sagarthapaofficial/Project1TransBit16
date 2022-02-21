@@ -71,7 +71,7 @@ namespace Project1TransBit16
                 if (input == "9") { req.RankProvincesByPopulationHandler(); return; }
                 if (input == "10") { req.RankProvincesByNumCitiesHandler(); return; }
                 if (input == "11") { req.GetCapitalHandler(); return; }
-                if (input == "12") { req.UpdatePopulationForCityHandler(); return; }
+                if (input == "12"){  req.UpdatePopulationForCityHandler(); return;}
                 if (input == "13") { Main(new string[0]); return; }
                 if (input == "exit") { System.Environment.Exit(0); }
                 invalid = true;

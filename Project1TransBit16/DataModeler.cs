@@ -78,12 +78,14 @@ namespace Project1TransBit16
         //Parses csv file.
         public static Dictionary<string, CityInfo> ParseCSV(string fileName)
         {
-            String[] csvData= File.ReadAllLines(fileName);
+            String[] csvData= File.ReadAllLines(fileName, Encoding.Latin1);
             Citydictionary = new Dictionary<string, CityInfo>();
             //Split 
             var cityInfo = new List<CityInfo>();
             for(int i=1;i<csvData.Length;i++)
             {
+                if (string.IsNullOrEmpty(csvData[i]))
+                    continue;
                 CityInfo info = new CityInfo(csvData[i]);
                 cityInfo.Add(info);
             }

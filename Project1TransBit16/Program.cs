@@ -111,7 +111,7 @@ namespace Project1TransBit16
             while (true)
             {
                 DisplayCountryInfo(ref stat, ref fileName);
-                Console.Read();
+                //Console.ReadLine();
             }
         }
     }

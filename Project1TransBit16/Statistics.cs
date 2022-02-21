@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using CsvHelper;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
+using CsvHelper.Configuration;
 
 namespace Project1TransBit16
 {
@@ -27,11 +28,15 @@ namespace Project1TransBit16
 
         private static readonly HttpClient client = new HttpClient();
 
+        private string filename;
+
 
         public Statistics(string filename, string fileType)
         {
+            this.filename = filename; 
             DataModeler < Dictionary<string, CityInfo> >DataModeller= new DataModeler<Dictionary<string, CityInfo>>();
             CityCatalogue=DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\" + filename+fileType);
+            //CityCatalogue = DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\test.csv");
         }
 
         /// <summary>
@@ -50,6 +55,7 @@ namespace Project1TransBit16
                 data = Console.ReadLine();
                 loadData = data.Split(",").ToList();
 
+                //handle exception here - it's possible to put in a single item
                 if (loadData[1] == "quebec" || loadData[1] == "Quebec")
                     loadData[1] = "Québec";
 
@@ -330,14 +336,16 @@ namespace Project1TransBit16
         //--Write Out--//
         public void WriteToCSV()
         {
+
             try
             {
-                //problem here - column order different from source and not handling diacritics. 
-                //have not tested reading these files back in
-                using (var writer = new StreamWriter(Directory.GetCurrentDirectory() + "\\data\\test.csv"))
-                using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.CurrentCulture))
+                //FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\test.csv", FileMode.OpenOrCreate);
+                FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".csv", FileMode.OpenOrCreate);
+                using (var writer = new StreamWriter(fs, Encoding.Latin1))
+                using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture))
                 {
-                    csv.WriteRecords(CityCatalogue.Values.ToList());
+                    csv.Context.RegisterClassMap<CityInfoMap>();
+                    csv.WriteRecords(CityCatalogue.Values);
                 }
             }
             catch (Exception e)
@@ -353,7 +361,8 @@ namespace Project1TransBit16
             {
                 //have not tested reading these files back in
                 string payload = JsonConvert.SerializeObject(CityCatalogue.Values);
-                StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\test.json");
+                //StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\test.json");
+                StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".json");
                 file.Write(payload);
                 file.Close();
             }
@@ -368,9 +377,13 @@ namespace Project1TransBit16
         {
             try
             {
-                //have not tested reading these files back in
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<CityInfo>));
-                FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\test.xml");
+                //files written with this method do read back in properly, but they contain information not present in the original file:
+                    //<?xml version="1.0"?>
+                    //<CanadaCities xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+                //we are requested not to edit the three source data files, so this may be a problem?
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<CityInfo>), new XmlRootAttribute("CanadaCities"));
+                //FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\test.xml");
+                FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".xml");
                 xmlSerializer.Serialize(file, CityCatalogue.Values.ToList());
                 file.Close();
             }
@@ -378,6 +391,23 @@ namespace Project1TransBit16
             {
                 Console.WriteLine(e.Message);
                 Environment.Exit(1);
+            }
+        }
+
+        //helper map class for Statistics.WriteToCSV, to force the columns to output in the specified order
+        private sealed class CityInfoMap : ClassMap<CityInfo>
+        {
+            public CityInfoMap()
+            {
+                Map(m => m.city).Name("city");
+                Map(m => m.city_ascii).Name("city_ascii");
+                Map(m => m.lat).Name("lat");
+                Map(m => m.lng).Name("lng");
+                Map(m => m.country).Name("country");
+                Map(m => m.admin_name).Name("admin_name");
+                Map(m => m.capital).Name("capital");
+                Map(m => m.population).Name("population");
+                Map(m => m.id).Name("id");
             }
         }
     }

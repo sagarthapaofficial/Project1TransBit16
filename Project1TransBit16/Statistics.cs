@@ -26,7 +26,6 @@ namespace Project1TransBit16
         public List<CityInfo> resultCityList =null;
         public readonly string ApiKey= "5b3ce3597851110001cf624842d0804e6a864305a35699c60b2ede2d";
 
-        private static readonly HttpClient client = new HttpClient();
 
         private string filename;
 
@@ -55,17 +54,17 @@ namespace Project1TransBit16
                 data = Console.ReadLine();
                 loadData = data.Split(",").ToList();
 
-                //handle exception here - it's possible to put in a single item
-                if (loadData[1] == "quebec" || loadData[1] == "Quebec")
-                    loadData[1] = "Québec";
 
                 foreach (var c in CityCatalogue)
                 {
 
                     if (loadData.Count == 2)
                     {
+                        if (loadData[1] == "quebec" || loadData[1] == "Quebec")
+                            loadData[1] = "Québec";
                         if (c.Value.city_ascii.ToLower().Equals(loadData[0].ToLower()) && c.Value.admin_name.ToLower().Equals(loadData[1].ToLower()))
                         {
+
                             city = c.Value;
                             return city;
                         }

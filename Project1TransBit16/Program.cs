@@ -60,8 +60,8 @@ namespace Project1TransBit16
             do
             {
                 input = Console.ReadLine();
-                if (input == "1") { stat.DisplayCityInformation().ToString(); return; }
-                if (input == "2") { req.provinceCityHandler();return; }
+                if (input == "1") { Console.WriteLine(stat.DisplayCityInformation().ToString()); return; }
+                if (input == "2") { req.DisplayProvinceCitiesHandler();return; }
                 if (input == "3") { req.largestCityHandler(); return; }
                 if (input == "4") { req.smallestCityHandler();return; }
                 if (input == "5") { req.compareCityHandler();return; }
@@ -102,20 +102,15 @@ namespace Project1TransBit16
             return null;
         }
 
-      
+
         static void Main(string[] args)
         {
             Statistics stat = null;
             string fileName = "";
             stat = GetStatistics(ref fileName);
-            Stopwatch watch = new Stopwatch();
             while (true)
             {
-                watch.Start();
                 DisplayCountryInfo(ref stat, ref fileName);
-                watch.Stop();
-                Console.WriteLine(watch.Elapsed);
-                Console.WriteLine("Hit Enter key if you want to continue querying.");
                 Console.ReadLine();
             }
         }

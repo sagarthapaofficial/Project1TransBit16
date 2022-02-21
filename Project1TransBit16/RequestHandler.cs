@@ -9,171 +9,99 @@ namespace Project1TransBit16
     public class RequestHandler
     {
         Statistics stat = null;
-        CityInfo city = null;
 
         public RequestHandler(Statistics stat)
         {
             this.stat = stat;
         }
 
-        public void provinceCityHandler()
-        {
-            List<CityInfo> cities = null;
-            string provinceName = "";
-            Console.WriteLine("Enter the province name:");
-            provinceName = Console.ReadLine();
-
-            if (provinceName == "quebec" || provinceName == "Quebec")
-                provinceName = "Québec";
-
-            cities = stat.DisplayProvinceCities($"{char.ToUpper(provinceName[0])}{provinceName.Substring(1)}");
-            if (cities.Count > 0)
-            {
-                foreach (var city in cities)
-                {
-                    Console.WriteLine(city.ToString());
-                }
-                return;
-            }
-
-            if (cities.Count == 0) Console.WriteLine("The province name is Invalid.");
-        }
-
+        //finds the largestcity in the province
         public void largestCityHandler()
         {
-            CityInfo city = null;
-            string provinceName = "";
-            bool invalid = false;
-            do
+            CityInfo largestCity = null;
+ 
+            bool validProvince = false;
+            while (!validProvince)
             {
-                Console.WriteLine("Enter the province name:");
-                provinceName = Console.ReadLine();
+                Console.WriteLine("Enter a province name to view largest city (ex. ontario | quebec):");
+                string input = Console.ReadLine();
 
-                if (provinceName == "quebec" || provinceName == "Quebec")
-                    provinceName = "Québec";
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
 
-                city = stat.DisplayLargestPopulationCity($"{char.ToUpper(provinceName[0])}{provinceName.Substring(1)}");
-                if (city != null)
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
                 {
-                    Console.WriteLine(city.ToString());
-                    return;
+                    largestCity = stat.DisplayLargestPopulationCity(input.ToLower());
+                    Console.WriteLine(largestCity.ToString());
+                    validProvince = true;
                 }
+                else
+                {
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
+                }
+            }
 
-                Console.WriteLine("The province name is Invalid.");
-                invalid = true;
-
-            } while (invalid);
         }
 
 
-
+        //Froms and validates entered province and finds the smallest city in the province
         public void smallestCityHandler()
         {
-            CityInfo city = null;
-            string provinceName = "";
-            bool invalid = false;
-            do
+            CityInfo smallestCity = null;
+
+            bool validProvince = false;
+            while (!validProvince)
             {
-                Console.WriteLine("Enter the province name:");
-                provinceName = Console.ReadLine();
-                if (provinceName == "quebec" || provinceName == "Quebec")
-                    provinceName = "Québec";
+                Console.WriteLine("Enter a province name to view smallest city (ex. ontario | quebec):");
+                string input = Console.ReadLine();
 
-                city = stat.DisplaySmallestPopulationCity($"{char.ToUpper(provinceName[0])}{provinceName.Substring(1)}");
-                if (city != null)
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
+
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
                 {
-                    Console.WriteLine(city.ToString());
-                    return;
+                    smallestCity = stat.DisplaySmallestPopulationCity(input.ToLower());
+                    Console.WriteLine(smallestCity.ToString());
+                    validProvince = true;
                 }
+                else
+                {
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
+                }
+            }
 
-                Console.WriteLine("The province name is Invalid.");
-                invalid = true;
-
-            } while (invalid);
         }
 
+        //compares the population of the 2 distinct cities.
         public void compareCityHandler()
         {
-            CityInfo city1 = null;
-            CityInfo city2 = null;
-            string word = "";
-            bool invalid = false;
-            do
-            {
-                Console.WriteLine("Enter two cities to compare population separated by space ( ):");
-                word = Console.ReadLine();
-                string[] cities = word.Split(" ");
-
-                //it would be nice if this input was case-insensitive
-
-                if (stat.CityCatalogue.ContainsKey(cities[0]) && stat.CityCatalogue.ContainsKey(cities[1]))
-                {
-                    foreach (var c in stat.CityCatalogue)
-                    {
-                        if (c.Key.Equals(cities[0]))
-                        {
-                            city1 = c.Value;
-                        }
-                        if (c.Key.Equals(cities[1])) { city2 = c.Value; }
-
-                    }
-
-                    stat.CompareCitiesPopulation(city1, city2);
-                    invalid = false;
-                }
-                else
-                {
-
-                    Console.WriteLine("Error: Please Enter valid cities");
-                    invalid = true;
-                }
-            } while (invalid);
-
+            CityInfo city1 = null, city2 = null;
+            Console.WriteLine("First City: ");
+            city1 = stat.DisplayCityInformation();
+            Console.WriteLine("Second City: ");
+            city2 = stat.DisplayCityInformation();
+            stat.CompareCitiesPopulation(city1, city2);
         }
 
+        //finds the distance between two cities
         public void DistanceHandler()
         {
-            string word = "";
-            bool invalid = true;
-            Console.WriteLine("Enter two cities to find distance between them with space between ( )");
-            word = Console.ReadLine();
             CityInfo city1 = null, city2 = null;
-
-            string[] cities = word.Split(" ");
-
-
-            //it would be nice if this input was case-insensitive
-
-            do
-            { 
-                if (stat.CityCatalogue.ContainsKey(cities[0]) && stat.CityCatalogue.ContainsKey(cities[1]))
-                {
-                    foreach (var c in stat.CityCatalogue)
-                    {
-                        if (c.Key.Equals(cities[0]))
-                        {
-                            city1 = c.Value;
-                        }
-                        if (c.Key.Equals(cities[1])) { city2 = c.Value; }
-
-                    }
-
-                    stat.CalculateDistanceBetweenCities(city1, city2);
-                    invalid = false;
-                }
-                else
-                {
-
-                    Console.WriteLine("Error: Please Enter valid cities");
-                    invalid = true;
-                }
-            } while (invalid);
-
+            Console.WriteLine("First City: ");
+            city1 = stat.DisplayCityInformation();
+            Console.WriteLine("Second City: ");
+            city2 = stat.DisplayCityInformation();
+            stat.CalculateDistanceBetweenCities(city1, city2);
 
         }
-
-
-
         //Forms & validates input and hooks to Statistics.DisplayProvincePopulation
         public void DisplayProvincePopulationHandler()
         {
@@ -206,6 +134,8 @@ namespace Project1TransBit16
         //Forms & validates input and hooks to Statistics.DisplayProvinceCities
         public void DisplayProvinceCitiesHandler()
         {
+            List<CityInfo> cityList = new List<CityInfo>();
+
             bool validProvince = false;
             while (!validProvince)
             {
@@ -221,7 +151,7 @@ namespace Project1TransBit16
 
                 if (citiesForProvince.Any())
                 {
-                    stat.DisplayProvinceCities(input);
+                    cityList=stat.DisplayProvinceCities(input.ToLower());
                     validProvince = true;
                 }
                 else
@@ -229,6 +159,13 @@ namespace Project1TransBit16
                     Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
                 }
             }
+
+            foreach(var c in cityList)
+            {
+                Console.WriteLine(c.ToString());
+            }
+
+
         }
 
         //Hooks to Statistics.RankProvincesByPopulation

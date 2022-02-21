@@ -25,6 +25,15 @@ namespace Project1TransBit16
             this.stat = stat;
         }
 
+        public void DisplayCityInformationHandler()
+        {
+            
+            CityInfo c = stat.DisplayCityInformation();
+            PrintCityHeaders();
+            PrintCity(c);
+            Console.WriteLine();
+        }
+
         //finds the largestcity in the province
         public void largestCityHandler()
         {
@@ -46,7 +55,10 @@ namespace Project1TransBit16
                 if (citiesForProvince.Any())
                 {
                     largestCity = stat.DisplayLargestPopulationCity(input.ToLower());
-                    Console.WriteLine(largestCity.ToString());
+                    PrintCityHeaders();
+                    PrintCity(largestCity);
+                    Console.WriteLine();
+                    //Console.WriteLine(largestCity.ToString());
                     validProvince = true;
                 }
                 else
@@ -79,7 +91,9 @@ namespace Project1TransBit16
                 if (citiesForProvince.Any())
                 {
                     smallestCity = stat.DisplaySmallestPopulationCity(input.ToLower());
-                    Console.WriteLine(smallestCity.ToString());
+                    PrintCityHeaders();
+                    PrintCity(smallestCity);
+                    Console.WriteLine();
                     validProvince = true;
                 }
                 else
@@ -98,7 +112,16 @@ namespace Project1TransBit16
             city1 = stat.DisplayCityInformation();
             Console.WriteLine("Second City: ");
             city2 = stat.DisplayCityInformation();
-            stat.CompareCitiesPopulation(city1, city2);
+            //stat.CompareCitiesPopulation(city1, city2);
+
+            PrintCityHeaders();
+            PrintCity(city1);
+            PrintCity(city2);
+            Console.WriteLine();
+
+            CityInfo greater = stat.CompareCitiesPopulation(city1, city2);
+            Console.WriteLine($"The city with the greater population is {greater.city_ascii}.\n");
+
         }
 
         //finds the distance between two cities
@@ -131,7 +154,7 @@ namespace Project1TransBit16
                 if (citiesForProvince.Any())
                 {
                     double pop = stat.DisplayProvincePopulation(input);
-                    Console.WriteLine($"Population for {input}: {pop}");
+                    Console.WriteLine($"\nPopulation for {input}: {pop}\n");
                     validProvince = true;
                 }
                 else
@@ -170,12 +193,12 @@ namespace Project1TransBit16
                 }
             }
 
-            foreach(var c in cityList)
-            {
-                Console.WriteLine(c.ToString());
-            }
+            PrintCityHeaders();
 
+            foreach (var c in cityList)
+                PrintCity(c);
 
+            Console.WriteLine(); 
         }
 
         //Hooks to Statistics.RankProvincesByPopulation
@@ -211,7 +234,7 @@ namespace Project1TransBit16
                 if (citiesForProvince.Any())
                 {
                     var cap = stat.GetCapital(input);
-                    Console.WriteLine($"Capital city for {input} is {cap.city}");
+                    Console.WriteLine($"\nCapital city for {input} is {cap.city}\n");
                     validProvince = true;
                 }
                 else
@@ -232,7 +255,7 @@ namespace Project1TransBit16
             bool validFiletype = false;
             while (!validFiletype)
             {
-                Console.WriteLine("Which of the following file extensions would you like to write to?");
+                Console.WriteLine("\nWhich of the following file extensions would you like to write to?");
                 Console.WriteLine("1) .CSV");
                 Console.WriteLine("2) .JSON");
                 Console.WriteLine("3) .XML");
@@ -248,6 +271,7 @@ namespace Project1TransBit16
 
             //get city to overwrite
             CityInfo cityToChange = null;
+            Console.WriteLine();
             cityToChange=stat.DisplayCityInformation();
 
             //get new pop
@@ -273,6 +297,8 @@ namespace Project1TransBit16
             //cityToChange.population = newPopulation;
             popEvent = new PopulationChangeEvent(cityToChange.population, newPopulation);
 
+            //update pop in list. changing this object affects the list
+            cityToChange.population = newPopulation;
 
             //write out new city to file, do event thing
             switch (filetype)
@@ -291,9 +317,19 @@ namespace Project1TransBit16
 
             //fires the event
             eventFired(popEvent);
-            //update pop in list. changing this object affects the list
-            cityToChange.population = newPopulation;
 
+
+        }
+
+        private void PrintCityHeaders()
+        {
+            String headers = String.Format("\n{0,-17} {1,-17} {2,-10} {3,-10} {4,-8} {5,-15} {6,-12} {7,-10}\n", "City", "City_ASCII", "Latitude", "Longitude", "Country", "Province", "Population", "ID");
+            Console.WriteLine(headers);
+        }
+        private void PrintCity(CityInfo c)
+        {
+            String obj = String.Format("{0,-17} {1,-17} {2,-10} {3,-10} {4,-8} {5,-15} {6,-12} {7,-10}", c.city, c.city_ascii, c.lat, c.lng, c.country, c.admin_name, c.population, c.id);
+            Console.WriteLine(obj);
         }
 
         //Passes to the event handler

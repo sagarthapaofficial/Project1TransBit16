@@ -103,18 +103,17 @@ namespace Project1TransBit16
         /// </summary>
         /// <param name="city1"></param>
         /// <param name="city2"></param>
-        public void CompareCitiesPopulation(CityInfo city1, CityInfo city2)
+        public CityInfo CompareCitiesPopulation(CityInfo city1, CityInfo city2)
         {
             if (city1.population > city2.population)
             {
-                Console.WriteLine(city1.ToString());
+                return city1;
             }
-            else
+            else if (city1.population < city2.population)
             {
-                Console.WriteLine(city2.ToString());
+                return city2;
             }
-            Console.WriteLine($"City1: {city1.city} population: {city1.population}");
-            Console.WriteLine($"City2: {city2.city} population: {city2.population}");
+            return null;
         }
 
 
@@ -134,7 +133,7 @@ namespace Project1TransBit16
                 FileName = $"https://www.latlong.net/c/?lat={city.lat}&long={city.lng}",
                 UseShellExecute = true
             });
-            Console.WriteLine($"Link to view city on Map: https://www.latlong.net/c/?lat={city.lat}&long={city.lng}");
+            Console.WriteLine($"Link to view city on Map: https://www.latlong.net/c/?lat={city.lat}&long={city.lng}\n");
 
         }
 
@@ -144,27 +143,48 @@ namespace Project1TransBit16
         /// </summary>
         /// <param name="city1"></param>
         /// <param name="city2"></param>
-        public async void CalculateDistanceBetweenCities(CityInfo city1, CityInfo city2)
+        private string getData(string url)
+        {
+            string checkResult = "";
+            try
+            {
+                HttpClient client = new HttpClient();
+                Task<string> t = client.GetStringAsync(url);
+                checkResult = t.Result;
+                client.Dispose();
+                return checkResult;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return checkResult;
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="city1"></param>
+        /// <param name="city2"></param>
+        public void CalculateDistanceBetweenCities(CityInfo city1, CityInfo city2)
         {
             //Api version
-            string url=$"https://api.openrouteservice.org/v2/directions/driving-car?api_key={ApiKey}&start={city1.lng},{city1.lat}&end={city2.lng},{city2.lat}";
-            const double meterToKm= 0.001;
+            string url = $"https://api.openrouteservice.org/v2/directions/driving-car?api_key={ApiKey}&start={city1.lng},{city1.lat}&end={city2.lng},{city2.lat}";
+            const double meterToKm = 0.001;
+            try
+            {
+                var responseBody = getData(url);
+                JObject obj = JObject.Parse(responseBody);
 
-            HttpClient client = new HttpClient();
-            string responseBody = await client.GetStringAsync(url);
-            JObject obj = JObject.Parse(responseBody);
-           
-            //NOw get the distance value from the JObject
-            double distance = (double)(obj["features"][0]["properties"]["summary"]["distance"]);
-            Console.WriteLine($"Distance Between {city1.city_ascii}, {city1.admin_name} to {city2.city_ascii}, {city2.admin_name} is {Math.Round(distance*meterToKm)} km.");
-
-
-
-            /*    var sCoord = new GeoCoordinate(city1.lat, city1.lng);
-                var eCoord = new GeoCoordinate(city2.lat, city2.lng);
-                const double metertokm = 0.001;*/
-
-            //    Console.WriteLine($"{Math.Round(sCoord.GetDistanceTo(eCoord) * metertokm)} km");
+                //NOw get the distance value from the JObject
+                double distance = (double)(obj["features"][0]["properties"]["summary"]["distance"]);
+                Console.WriteLine($"\nDistance Between {city1.city_ascii}, {city1.admin_name} to {city2.city_ascii}, {city2.admin_name} is {Math.Round(distance * meterToKm)} km.\n");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
@@ -324,7 +344,7 @@ namespace Project1TransBit16
         {
             //!string.IsNullOrEmpty(city.Value.capital) 
             var capital =          from city in CityCatalogue
-                                   where city.Value.admin_name.ToLower().Equals(provinceName)
+                                   where city.Value.admin_name.ToLower().Equals(provinceName.ToLower())
                                             && city.Value.capital.Equals("admin")
                                    select city.Value;
 
@@ -339,7 +359,7 @@ namespace Project1TransBit16
             try
             {
                 //FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\test.csv", FileMode.OpenOrCreate);
-                FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".csv", FileMode.OpenOrCreate);
+                FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\Canadacities.csv", FileMode.OpenOrCreate);
                 using (var writer = new StreamWriter(fs, Encoding.Latin1))
                 using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture))
                 {
@@ -361,7 +381,7 @@ namespace Project1TransBit16
                 //have not tested reading these files back in
                 string payload = JsonConvert.SerializeObject(CityCatalogue.Values);
                 //StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\test.json");
-                StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".json");
+                StreamWriter file = File.CreateText(Directory.GetCurrentDirectory() + "\\data\\Canadacities-JSON.json");
                 file.Write(payload);
                 file.Close();
             }
@@ -382,7 +402,7 @@ namespace Project1TransBit16
                 //we are requested not to edit the three source data files, so this may be a problem?
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<CityInfo>), new XmlRootAttribute("CanadaCities"));
                 //FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\test.xml");
-                FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".xml");
+                FileStream file = File.Create(Directory.GetCurrentDirectory() + "\\data\\CanadaCities-XML.xml");
                 xmlSerializer.Serialize(file, CityCatalogue.Values.ToList());
                 file.Close();
             }

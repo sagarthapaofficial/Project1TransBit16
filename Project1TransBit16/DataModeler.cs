@@ -84,7 +84,7 @@ namespace Project1TransBit16
             var cityInfo = new List<CityInfo>();
             for(int i=1;i<csvData.Length;i++)
             {
-                if (string.IsNullOrEmpty(csvData[i]))
+                if (string.IsNullOrEmpty(csvData[i]) || csvData[i].Split(',').Length < 9)
                     continue;
                 CityInfo info = new CityInfo(csvData[i]);
                 cityInfo.Add(info);

@@ -20,7 +20,7 @@ namespace Project1TransBit16
         //Notify method notifies the prof when the event occurs
         public static void NotifyUser(Object s, PopulationChangeEvent p1)
         {
-            Console.WriteLine($"The population has been updated from {p1.CurrentPopulation} to {p1.NewPopulation}.");
+            Console.WriteLine($"\nThe population has been updated from {p1.CurrentPopulation} to {p1.NewPopulation}.\n");
         }
     }
 }

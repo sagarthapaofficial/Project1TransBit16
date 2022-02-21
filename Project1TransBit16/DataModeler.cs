@@ -49,8 +49,8 @@ namespace Project1TransBit16
             }
             foreach (var getlist in list)
             {
-                Citydictionary.Add(getlist.id, getlist);
-                if (!Citydictionary.ContainsKey(getlist.id))
+
+                if (!Citydictionary.ContainsKey(getlist.id) )
                 {
                     Citydictionary.Add(getlist.id, getlist);
                 }

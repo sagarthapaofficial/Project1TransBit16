@@ -86,6 +86,30 @@ namespace Project1TransBit16
 
         public void cityonMap(Statistics stat)
         {
+<<<<<<< Updated upstream
+=======
+            string word = "";
+            bool invalid = true;
+            CityInfo city1 = null, city2 = null;
+          
+
+            do
+            {
+                Console.WriteLine("Enter two cities to find distance between them with space between ( )");
+                word = Console.ReadLine();
+                string[] cities = word.Split(" ");
+                if (stat.CityCatalogue.ContainsKey(cities[0]) && stat.CityCatalogue.ContainsKey(cities[1]))
+                {
+                foreach (var c in stat.CityCatalogue)
+                {
+                    if (c.Key.Equals(cities[0]))
+                    {
+                        city1 = c.Value;
+                    }
+                    if (c.Key.Equals(cities[1])) { city2 = c.Value; }
+
+                }
+>>>>>>> Stashed changes
 
         }
 
@@ -96,31 +120,96 @@ namespace Project1TransBit16
 
         public void ProvincePopHandler(Statistics stat)
         {
+            bool validProvince = false;
+            while (!validProvince)
+            {
+                Console.WriteLine("Enter a province name to view the sum of all populations of its cities (ex. ontario | quebec):");
+                string input = Console.ReadLine();
+
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
+
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
+                {
+                    double pop = stat.DisplayProvincePopulation(input);
+                    Console.WriteLine($"Population for {input}: {pop}");
+                    validProvince = true;
+                }
+                else
+                {
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
+                }
+            }
 
         }
 
         public void RankProvincePopHandler(Statistics stat)
         {
-
+            Console.WriteLine("Sorting provinces by population.");
+            stat.RankProvincesByPopulation();
         }
 
         public void RankProvByCityHandler(Statistics stat)
         {
-
+            Console.WriteLine("Sorting provinces by the number of cities in each.");
+            stat.RankProvincesByCities();
         }
 
+<<<<<<< Updated upstream
         public void provinceCapHandler(Statistics stat)
+=======
+
+        //Forms & validates input and hooks to Statistics.GetCapital
+        public void provinceCapHandler()
+>>>>>>> Stashed changes
         {
+            bool validProvince = false;
+            while (!validProvince)
+            {
+                Console.WriteLine("Enter a province name to view its capital city (ex. ontario | quebec):");
+                string input = Console.ReadLine();
 
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
+
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
+                {
+                    var cap = stat.GetCapital(input);
+                    Console.WriteLine($"Capital city for {input} is {cap.city}");
+                    validProvince = true;
+                }
+                else
+                {
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
+                }
+            }
         }
-
-
-
-
 
 
 
 
 
     }
+
+       
+
+    
+
+
+
+
+
+
+
+
+
+    
 }

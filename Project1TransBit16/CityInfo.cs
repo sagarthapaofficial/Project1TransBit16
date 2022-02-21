@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+
 namespace Project1TransBit16
 {
     //holds information about the city.
@@ -53,6 +54,14 @@ namespace Project1TransBit16
         public  double population { get; set; }
        
         public  string id { get; set; }
+
+
+        public delegate void CityPopulationChangeHandler(object source, PopulationChangeEvent e);
+        public event CityPopulationChangeHandler CityPopulationChange;
+        protected virtual void OnPopulationChange(PopulationChangeEvent e)
+        {
+            CityPopulationChange.Invoke(this, e);
+        }
 
         public override string ToString()
         {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,117 +8,112 @@ namespace Project1TransBit16
 {
     public class RequestHandler
     {
+        Statistics stat = null;
 
-        public void provinceCityHandler(Statistics stat)
+        //Delegate and event handler
+
+        public delegate void Del(Object source, PopulationChangeEvent ev);
+        //event handler
+        public event Del PopHandler;
+
+        //Instantiation of the cityPopulationChangeEvent
+        PopulationChangeEvent popEvent = null;
+
+
+        public RequestHandler(Statistics stat)
         {
-            List<CityInfo> cities = new List<CityInfo>();
-            string provinceName = "";
-            Console.WriteLine("Enter the province name:");
-            provinceName = Console.ReadLine();
+            this.stat = stat;
+        }
 
-            cities = stat.DisplayProvinceCities(provinceName);
-            if (cities.Count > 0)
+        //finds the largestcity in the province
+        public void largestCityHandler()
+        {
+            CityInfo largestCity = null;
+ 
+            bool validProvince = false;
+            while (!validProvince)
             {
-                foreach (var city in cities)
+                Console.WriteLine("Enter a province name to view largest city (ex. ontario | quebec):");
+                string input = Console.ReadLine();
+
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
+
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
                 {
-                    Console.WriteLine(city.ToString());
+                    largestCity = stat.DisplayLargestPopulationCity(input.ToLower());
+                    Console.WriteLine(largestCity.ToString());
+                    validProvince = true;
                 }
-                return;
+                else
+                {
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
+                }
             }
 
-            if (cities.Count == 0) Console.WriteLine("The province name is Invalid.");
         }
 
 
-
-        public void largestCityHandler(Statistics stat)
+        //Froms and validates entered province and finds the smallest city in the province
+        public void smallestCityHandler()
         {
-            CityInfo city = new CityInfo();
-            string provinceName = "";
-            bool invalid = false;
-            do
+            CityInfo smallestCity = null;
+
+            bool validProvince = false;
+            while (!validProvince)
             {
-                Console.WriteLine("Enter the province name:");
-                provinceName = Console.ReadLine();
+                Console.WriteLine("Enter a province name to view smallest city (ex. ontario | quebec):");
+                string input = Console.ReadLine();
 
-                city = stat.DisplayLargestPopulationCity(provinceName);
-                if (city != null)
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
+
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
                 {
-                   Console.WriteLine(city.ToString());
-                   return;
+                    smallestCity = stat.DisplaySmallestPopulationCity(input.ToLower());
+                    Console.WriteLine(smallestCity.ToString());
+                    validProvince = true;
                 }
-
-                Console.WriteLine("The province name is Invalid.");
-                invalid = true;
-
-            } while (invalid);
-        }
-
-
-
-        public void smallestCityHandler(Statistics stat)
-        {
-            CityInfo city = new CityInfo();
-            string provinceName = "";
-            bool invalid = false;
-            do
-            {
-                Console.WriteLine("Enter the province name:");
-                provinceName = Console.ReadLine();
-
-                city = stat.DisplaySmallestPopulationCity(provinceName);
-                if (city != null)
+                else
                 {
-                    Console.WriteLine(city.ToString());
-                    return;
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
                 }
-
-                Console.WriteLine("The province name is Invalid.");
-                invalid = true;
-
-            } while (invalid);
-        }
-
-        public void compareCityHandler(Statistics stat)
-        {
+            }
 
         }
 
-        public void cityonMap(Statistics stat)
+        //compares the population of the 2 distinct cities.
+        public void compareCityHandler()
         {
-<<<<<<< Updated upstream
-=======
-            string word = "";
-            bool invalid = true;
             CityInfo city1 = null, city2 = null;
-          
-
-            do
-            {
-                Console.WriteLine("Enter two cities to find distance between them with space between ( )");
-                word = Console.ReadLine();
-                string[] cities = word.Split(" ");
-                if (stat.CityCatalogue.ContainsKey(cities[0]) && stat.CityCatalogue.ContainsKey(cities[1]))
-                {
-                foreach (var c in stat.CityCatalogue)
-                {
-                    if (c.Key.Equals(cities[0]))
-                    {
-                        city1 = c.Value;
-                    }
-                    if (c.Key.Equals(cities[1])) { city2 = c.Value; }
-
-                }
->>>>>>> Stashed changes
-
+            Console.WriteLine("First City: ");
+            city1 = stat.DisplayCityInformation();
+            Console.WriteLine("Second City: ");
+            city2 = stat.DisplayCityInformation();
+            stat.CompareCitiesPopulation(city1, city2);
         }
 
-        public void DistanceHandler(Statistics stat)
+        //finds the distance between two cities
+        public void DistanceHandler()
         {
+            CityInfo city1 = null, city2 = null;
+            Console.WriteLine("First City: ");
+            city1 = stat.DisplayCityInformation();
+            Console.WriteLine("Second City: ");
+            city2 = stat.DisplayCityInformation();
+            stat.CalculateDistanceBetweenCities(city1, city2);
 
         }
-
-        public void ProvincePopHandler(Statistics stat)
+        //Forms & validates input and hooks to Statistics.DisplayProvincePopulation
+        public void DisplayProvincePopulationHandler()
         {
             bool validProvince = false;
             while (!validProvince)
@@ -144,28 +139,61 @@ namespace Project1TransBit16
                     Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
                 }
             }
+        }
+
+        //Forms & validates input and hooks to Statistics.DisplayProvinceCities
+        public void DisplayProvinceCitiesHandler()
+        {
+            List<CityInfo> cityList = new List<CityInfo>();
+
+            bool validProvince = false;
+            while (!validProvince)
+            {
+                Console.WriteLine("Enter a province name to view all of the cities for that province (ex. ontario | quebec):");
+                string input = Console.ReadLine();
+
+                if (input == "quebec" || input == "Quebec")
+                    input = "Québec";
+
+                var citiesForProvince = from city in stat.CityCatalogue
+                                        where city.Value.admin_name.ToLower() == input.ToLower()
+                                        select city;
+
+                if (citiesForProvince.Any())
+                {
+                    cityList=stat.DisplayProvinceCities(input.ToLower());
+                    validProvince = true;
+                }
+                else
+                {
+                    Console.WriteLine($"No cities found for province {input}, please check your spelling and try again.");
+                }
+            }
+
+            foreach(var c in cityList)
+            {
+                Console.WriteLine(c.ToString());
+            }
+
 
         }
 
-        public void RankProvincePopHandler(Statistics stat)
+        //Hooks to Statistics.RankProvincesByPopulation
+        public void RankProvincesByPopulationHandler()
         {
             Console.WriteLine("Sorting provinces by population.");
             stat.RankProvincesByPopulation();
         }
 
-        public void RankProvByCityHandler(Statistics stat)
+        //Hooks to Statistics.RankProvincesByCities
+        public void RankProvincesByNumCitiesHandler()
         {
             Console.WriteLine("Sorting provinces by the number of cities in each.");
             stat.RankProvincesByCities();
         }
 
-<<<<<<< Updated upstream
-        public void provinceCapHandler(Statistics stat)
-=======
-
         //Forms & validates input and hooks to Statistics.GetCapital
-        public void provinceCapHandler()
->>>>>>> Stashed changes
+        public void GetCapitalHandler()
         {
             bool validProvince = false;
             while (!validProvince)
@@ -194,22 +222,84 @@ namespace Project1TransBit16
         }
 
 
+        public void UpdatePopulationForCityHandler()
+        {
+            //Assigning the subscriber method to the publisher.
+            PopHandler += PopulationChangeEvent.NotifyUser;
+
+            //get file type for write out
+            int filetype = 0;
+            bool validFiletype = false;
+            while (!validFiletype)
+            {
+                Console.WriteLine("Which of the following file extensions would you like to write to?");
+                Console.WriteLine("1) .CSV");
+                Console.WriteLine("2) .JSON");
+                Console.WriteLine("3) .XML");
+                filetype = 0;
+                string input = Console.ReadLine();
+
+                if (int.TryParse(input, out filetype))
+                    if (filetype >= 1 && filetype <= 3)
+                        break;
+
+                Console.WriteLine("Invalid input. Please try again");
+            }
+
+            //get city to overwrite
+            CityInfo cityToChange = null;
+            cityToChange=stat.DisplayCityInformation();
+
+            //get new pop
+            double newPopulation = 0;
+            bool validPop = false;
+            while (!validPop)
+            {
+                Console.WriteLine($"{cityToChange.city} current population: {cityToChange.population}\nEnter new population:");
+                string input = Console.ReadLine();
+                newPopulation = 0;
+
+                if (double.TryParse(input, out newPopulation) && newPopulation >= 0)
+                {
+                    validPop = true;
+                }
+                else
+                {
+                    Console.WriteLine("New population entered was negative or not a number. Please try again.");
+                }
+            }
+
+            //update pop in list. changing this object affects the list
+            //cityToChange.population = newPopulation;
+            popEvent = new PopulationChangeEvent(cityToChange.population, newPopulation);
 
 
+            //write out new city to file, do event thing
+            switch (filetype)
+            {
+                case 1:
+                    stat.WriteToCSV();
+                    break;
+                case 2:
+                    stat.WriteToJSON();
+                    break;
+                case 3:
+                    stat.WriteToXML();
+                    break;
 
+            }
+
+            //fires the event
+            eventFired(popEvent);
+            //update pop in list. changing this object affects the list
+            cityToChange.population = newPopulation;
+
+        }
+
+        //Passes to the event handler
+        protected virtual void eventFired(PopulationChangeEvent data)
+        {
+            if (PopHandler != null) PopHandler.Invoke(this, data);
+        }
     }
-
-       
-
-    
-
-
-
-
-
-
-
-
-
-    
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Project1TransBit16
 {
@@ -41,10 +42,11 @@ namespace Project1TransBit16
             Console.WriteLine("7)  Calculate Distance Between Cities");
             Console.WriteLine("8)  Display Province Population");
             Console.WriteLine("9)  Rank Provinces By Population");
-            Console.WriteLine("10)  Rank Provinces By Cities");
+            Console.WriteLine("10) Rank Provinces By Cities");
             Console.WriteLine("11) Get Capital of Province");
-            Console.WriteLine("12) Restart Program And Choose Another File or File Type To Query");
-
+            Console.WriteLine("12) Update the population for a city");
+            Console.WriteLine("13) Restart Program And Choose Another File or File Type To Query");
+            Console.WriteLine("Enter 'exit' to Exit the program");
         }
 
    
@@ -53,30 +55,30 @@ namespace Project1TransBit16
           
             bool invalid = false;
             string input = "";
-            RequestHandler req = new RequestHandler();
+            RequestHandler req = new RequestHandler(stat);
             subMenu(fileName);
             do
             {
                 input = Console.ReadLine();
-                if (input == "1") { stat.DisplayCityInformation(); return; }
-                if (input == "2") { req.provinceCityHandler(stat);return; }
-                if (input == "3") { req.largestCityHandler(stat); return; }
-                if (input == "4") { req.smallestCityHandler(stat);return; }
-                if (input == "5") { req.compareCityHandler(stat);return; }
-                if (input == "6") { req.cityonMap(stat); return; }
-                if (input == "7") { req.DistanceHandler(stat); return; }
-                if (input == "8") { req.ProvincePopHandler(stat); return; }
-                if (input == "9") { req.RankProvincePopHandler(stat); return; }
-                if (input == "10") { req.RankProvByCityHandler(stat); return; }
-                if (input == "11") { req.provinceCapHandler(stat); return; }
-                if (input == "12") { Main(new string[0]); return; }
+                if (input == "1") { Console.WriteLine(stat.DisplayCityInformation().ToString()); return; }
+                if (input == "2") { req.DisplayProvinceCitiesHandler();return; }
+                if (input == "3") { req.largestCityHandler(); return; }
+                if (input == "4") { req.smallestCityHandler();return; }
+                if (input == "5") { req.compareCityHandler();return; }
+                if (input == "6") { stat.ShowCityOnMap(); return; }
+                if (input == "7") { req.DistanceHandler(); return; }
+                if (input == "8") { req.DisplayProvincePopulationHandler(); return; }
+                if (input == "9") { req.RankProvincesByPopulationHandler(); return; }
+                if (input == "10") { req.RankProvincesByNumCitiesHandler(); return; }
+                if (input == "11") { req.GetCapitalHandler(); return; }
+                if (input == "12") { req.UpdatePopulationForCityHandler(); return; }
+                if (input == "13") { Main(new string[0]); return; }
                 if (input == "exit") { System.Environment.Exit(0); }
                 invalid = true;
                 Console.WriteLine("Error! : Enter a valid option.");
 
             } while (invalid);
-          
-
+         
         }
         public static Statistics GetStatistics(ref string fileName)
         {
@@ -100,18 +102,16 @@ namespace Project1TransBit16
             return null;
         }
 
-      
+
         static void Main(string[] args)
         {
             Statistics stat = null;
             string fileName = "";
             stat = GetStatistics(ref fileName);
-            
             while (true)
             {
                 DisplayCountryInfo(ref stat, ref fileName);
-                Console.WriteLine("Hit Enter key if you want to continue quering.");
-                Console.ReadLine();
+                //Console.ReadLine();
             }
         }
     }

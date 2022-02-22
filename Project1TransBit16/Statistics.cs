@@ -352,20 +352,21 @@ namespace Project1TransBit16
         }
 
 
-        //--Write Out--//
+//--Write Out--//
         public void WriteToCSV()
         {
-
             try
             {
-                //FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\test.csv", FileMode.OpenOrCreate);
-                FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\Canadacities.csv", FileMode.OpenOrCreate);
-                using (var writer = new StreamWriter(fs, Encoding.Latin1))
-                using (var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture))
-                {
-                    csv.Context.RegisterClassMap<CityInfoMap>();
-                    csv.WriteRecords(CityCatalogue.Values);
-                }
+                //FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\data\test.csv", FileMode.OpenOrCreate);
+                FileStream fs = new FileStream(Directory.GetCurrentDirectory() + "\\data\\" + filename + ".csv", FileMode.OpenOrCreate);
+                var writer = new StreamWriter(fs, Encoding.UTF8);
+                var csv = new CsvWriter(writer, System.Globalization.CultureInfo.InvariantCulture);
+
+                csv.Context.RegisterClassMap<CityInfoMap>();
+                csv.WriteRecords(CityCatalogue.Values.ToList());
+
+                fs.Close();
+
             }
             catch (Exception e)
             {

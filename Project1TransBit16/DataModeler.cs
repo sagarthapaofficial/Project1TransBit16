@@ -78,7 +78,7 @@ namespace Project1TransBit16
         //Parses csv file.
         public static Dictionary<string, CityInfo> ParseCSV(string fileName)
         {
-            String[] csvData= File.ReadAllLines(fileName, Encoding.Latin1);
+            String[] csvData = File.ReadAllLines(fileName, Encoding.GetEncoding("iso-8859-1"));
             Citydictionary = new Dictionary<string, CityInfo>();
             //Split 
             var cityInfo = new List<CityInfo>();

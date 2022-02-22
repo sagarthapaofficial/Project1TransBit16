@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+GroupName:TransBit
+@authors: Sagar Thapa, Gordon Reaman
+ProgramName: CityInfo.cs
+Date: 2022-02-22
+ 
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +20,8 @@ namespace Project1TransBit16
     [XmlType("CanadaCity")]
     public class CityInfo
     {
+
+        //Default constructor
         public CityInfo()
         {
             city = "";
@@ -23,6 +34,7 @@ namespace Project1TransBit16
             population = 0.0;
             id = "";
         }
+        //CityInfo takes data
         public CityInfo(string data)
         {
             string []getData= data.Split(',');
@@ -37,6 +49,8 @@ namespace Project1TransBit16
             id = getData[8];
 
         }
+
+        //getters and setters
         public string city { get; set; }
        
         public  string  city_ascii { get; set; }
@@ -55,14 +69,7 @@ namespace Project1TransBit16
        
         public  string id { get; set; }
 
-
-        public delegate void CityPopulationChangeHandler(object source, PopulationChangeEvent e);
-        public event CityPopulationChangeHandler CityPopulationChange;
-        protected virtual void OnPopulationChange(PopulationChangeEvent e)
-        {
-            CityPopulationChange.Invoke(this, e);
-        }
-
+        //ToString method
         public override string ToString()
         {
             return $"City: {city}, city_Ascii:{city_ascii}, Latitude: {lat}, Longitude: {lng}, Country: {country}, Province: {admin_name}, Population: {population}, Capital: {capital}";

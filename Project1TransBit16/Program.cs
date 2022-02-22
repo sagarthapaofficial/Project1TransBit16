@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+GroupName:TransBit
+@authors: Sagar Thapa, Gordon Reaman
+ProgramName: Progarm.cs
+Date: 2022-02-22
+ 
+ */
+
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -6,10 +15,14 @@ namespace Project1TransBit16
 {
     class Program
     {
+        //constant filenames
         const string JSON_FILENAME= "Canadacities-JSON";
         const string XML_FILENAME = "Canadacities-XML";
         const string CSV_FILENAME = "Canadacities";
 
+
+       
+        /// Main menu 
         public static void MainMenu()
         {
             Console.WriteLine("---------------------");
@@ -28,7 +41,8 @@ namespace Project1TransBit16
             Console.WriteLine("Select an option from the list above (e.g. 1, 2");
         }
 
-
+        /// Shows the various options to query to the user
+        /// <param name="fileName"></param>
         public static void subMenu(string fileName)
         {
             Console.WriteLine($"A city catalogue has now been populated from the {fileName} file.");
@@ -50,69 +64,93 @@ namespace Project1TransBit16
         }
 
    
-        public static void DisplayCountryInfo(ref Statistics stat, ref string fileName)
+        /// Handles various options chosen by the user
+        /// <param name="stat"></param>
+        /// <param name="fileName"></param>
+        public static void HandleOptions(ref Statistics stat, ref string fileName)
         {
           
             bool invalid = false;
             string input = "";
-            RequestHandler req = new RequestHandler(stat);
-            subMenu(fileName);
-            do
-            {
-                input = Console.ReadLine();
-                if (input == "1") { req.DisplayCityInformationHandler(); return; }
-                if (input == "2") { req.DisplayProvinceCitiesHandler();return; }
-                if (input == "3") { req.largestCityHandler(); return; }
-                if (input == "4") { req.smallestCityHandler();return; }
-                if (input == "5") { req.compareCityHandler();return; }
-                if (input == "6") { stat.ShowCityOnMap(); return; }
-                if (input == "7") { req.DistanceHandler(); return; }
-                if (input == "8") { req.DisplayProvincePopulationHandler(); return; }
-                if (input == "9") { req.RankProvincesByPopulationHandler(); return; }
-                if (input == "10") { req.RankProvincesByNumCitiesHandler(); return; }
-                if (input == "11") { req.GetCapitalHandler(); return; }
-                if (input == "12") { req.UpdatePopulationForCityHandler(); return; }
-                if (input == "13") { Main(new string[0]); return; }
-                if (input == "exit") { System.Environment.Exit(0); }
-                invalid = true;
-                Console.WriteLine("Error! : Enter a valid option.");
 
-            } while (invalid);
+            try
+            {
+                RequestHandler req = new RequestHandler(stat);
+                subMenu(fileName);
+                do
+                {
+                    input = Console.ReadLine();
+                    if (input == "1") { req.DisplayCityInformationHandler(); return; }
+                    if (input == "2") { req.DisplayProvinceCitiesHandler(); return; }
+                    if (input == "3") { req.largestCityHandler(); return; }
+                    if (input == "4") { req.smallestCityHandler(); return; }
+                    if (input == "5") { req.compareCityHandler(); return; }
+                    if (input == "6") { req.ShowCityOnMapHandler(); return; }
+                    if (input == "7") { req.DistanceHandler(); return; }
+                    if (input == "8") { req.DisplayProvincePopulationHandler(); return; }
+                    if (input == "9") { req.RankProvincesByPopulationHandler(); return; }
+                    if (input == "10") { req.RankProvincesByNumCitiesHandler(); return; }
+                    if (input == "11") { req.GetCapitalHandler(); return; }
+                    if (input == "12") { req.UpdatePopulationForCityHandler(); return; }
+                    if (input == "13") { Main(new string[0]); return; }
+                    if (input == "exit") { System.Environment.Exit(0); }
+                    invalid = true;
+                    Console.WriteLine("Error! : Enter a valid option.");
+
+                } while (invalid);
+
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
          
         }
+
+        ///Returns the type of file chosen by the users to query from
+        /// <param name="fileName"></param>
+        /// <returns>Statistics</returns>
         public static Statistics GetStatistics(ref string fileName)
         {
-            MainMenu();
-            bool invalid = false;
-            string input = "";
-            do
+            try
             {
-                input = Console.ReadLine();
-                if (input == "1") return new Statistics(CSV_FILENAME, ".csv");
-                if (input == "2") return new Statistics(JSON_FILENAME, ".json");
-                if (input == "3") return new Statistics(XML_FILENAME, ".xml");
-                if (input == "exit") System.Environment.Exit(0);
-                
+                MainMenu();
+                bool invalid = false;
+                string input = "";
+                do
+                {
+                    input = Console.ReadLine();
+                    if (input == "1") return new Statistics(CSV_FILENAME, ".csv");
+                    if (input == "2") return new Statistics(JSON_FILENAME, ".json");
+                    if (input == "3") return new Statistics(XML_FILENAME, ".xml");
+                    if (input == "exit") System.Environment.Exit(0);
 
-                invalid = true;
-                Console.WriteLine("Error! : Enter a valid option.");
 
-            } while (invalid);
+                    invalid = true;
+                    Console.WriteLine("Error! : Enter a valid option.");
 
+                } while (invalid);
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return null;
         }
 
 
         static void Main(string[] args)
         {
+            //Statistic object
             Statistics stat = null;
             string fileName = "";
             stat = GetStatistics(ref fileName);
+           
+            //Runs until the users wishes to exit
             while (true)
             {
-                DisplayCountryInfo(ref stat, ref fileName);
+                //calls the handleoptions function
+                HandleOptions(ref stat, ref fileName);
                 Console.WriteLine("Press any key to query again");
-                Console.ReadLine();
+                Console.ReadKey();
             }
         }
     }

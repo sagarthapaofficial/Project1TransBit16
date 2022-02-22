@@ -1,11 +1,18 @@
+/*
+GroupName:TransBit
+@authors: Sagar Thapa, Gordon Reaman
+ProgramName: Statistics.cs
+Date: 2022-02-22
+ 
+ */
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using System.Device.Location;
 using System.IO;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
@@ -19,112 +26,115 @@ namespace Project1TransBit16
     /* Enables the user to retrieve all information about the stored cities in the Dictionary generic type.*/
     public class Statistics
     {
-        //ISSUE: citycatalogue is missing a few cities. 252 actual, 248 in csv and xml, 249 in json
 
         //Dictionary that holds the cities information returned from the DataModeler class.
         public Dictionary<string, CityInfo> CityCatalogue; 
         public List<CityInfo> resultCityList =null;
+        //readonly APIkey
         public readonly string ApiKey= "5b3ce3597851110001cf624842d0804e6a864305a35699c60b2ede2d";
-
-
         private string filename;
 
 
+        //Constructor
         public Statistics(string filename, string fileType)
         {
-            this.filename = filename; 
-            DataModeler < Dictionary<string, CityInfo> >DataModeller= new DataModeler<Dictionary<string, CityInfo>>();
-            CityCatalogue=DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\" + filename+fileType);
-            //CityCatalogue = DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\test.csv");
+            try
+            {
+                this.filename = filename;
+                DataModeler DataModeller = new DataModeler();
+                CityCatalogue = DataModeller.ParseFile(Directory.GetCurrentDirectory() + "\\data\\" + filename + fileType);
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
 
-        /// <summary>
-        /// /
-        /// </summary>
-        /// <returns></returns>
-        public CityInfo DisplayCityInformation()
+        /// / Retunrs the information of the city queried by the user
+        /// @returns CityInfo object
+        public CityInfo DisplayCityInformation(string cityName, string province)
         {
-            string data = "";
-            bool Isvalid = false;
-            List<string> loadData = new List<string>();
             CityInfo city = null;
-            do
+            try
             {
-                Console.WriteLine("Enter the city and province name separated by comma (,)");
-                data = Console.ReadLine();
-                loadData = data.Split(",").ToList();
-
-
                 foreach (var c in CityCatalogue)
                 {
+                    //checks for the french accent word
+                    if (province == "quebec" || province == "Quebec")
+                        province = "Québec";
 
-                    if (loadData.Count == 2)
+                    if (c.Value.city_ascii.ToLower().Equals(cityName.ToLower()) && c.Value.admin_name.ToLower().Equals(province.ToLower()))
                     {
-                        if (loadData[1] == "quebec" || loadData[1] == "Quebec")
-                            loadData[1] = "Québec";
-                        if (c.Value.city_ascii.ToLower().Equals(loadData[0].ToLower()) && c.Value.admin_name.ToLower().Equals(loadData[1].ToLower()))
-                        {
 
-                            city = c.Value;
-                            return city;
-                        }
+                        return city = c.Value;
                     }
+
                 }
-                Isvalid = false;
-                Console.WriteLine("Error !: The city or province does not exist");
-
-            } while (!Isvalid);
-
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return city;
+           
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// Returns the largest population city in the given province
         /// <param name="provinceName"></param>
-        /// <returns></returns>
+        /// <returns>CityInfo</returns>
         public CityInfo DisplayLargestPopulationCity(string provinceName)
         {
-            CityInfo Populouscity = new CityInfo();
-
-            foreach (var city in CityCatalogue)
+            CityInfo Populouscity = null;
+            try
             {
+                Populouscity = new CityInfo();
 
-                if (Populouscity.population < city.Value.population && city.Value.admin_name.ToLower().Equals(provinceName))
+                foreach (var city in CityCatalogue)
                 {
-                    Populouscity = city.Value;
+
+                    if (Populouscity.population < city.Value.population && city.Value.admin_name.ToLower().Equals(provinceName))
+                    {
+                        Populouscity = city.Value;
+                    }
                 }
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
+            //returns the populous city
             return Populouscity;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+
+
+        ///Compares given two cities and return the country with larger population
         /// <param name="city1"></param>
         /// <param name="city2"></param>
+        /// //returns CityInfo
         public CityInfo CompareCitiesPopulation(CityInfo city1, CityInfo city2)
         {
-            if (city1.population > city2.population)
+            try
             {
-                return city1;
-            }
-            else if (city1.population < city2.population)
+                if (city1.population > city2.population)
+                {
+                    return city1;
+                }
+                else if (city1.population < city2.population)
+                {
+                    return city2;
+                }
+            }catch(Exception ex)
             {
-                return city2;
+                Console.WriteLine(ex.Message);
             }
             return null;
         }
 
 
-        /// <summary>
-        /// 
+ 
         /// </summary>
         //Use the name of the city and province to mark a city on the map.
-        public void ShowCityOnMap()
+        public void ShowCityOnMap(CityInfo city)
         {
-
-            CityInfo city = DisplayCityInformation();
 
             //uses the sytem.diagonostics process tool to execute the map of the city
             System.Diagnostics.Process.Start(
@@ -138,9 +148,7 @@ namespace Project1TransBit16
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
+        //gets the data from the server
         /// <param name="city1"></param>
         /// <param name="city2"></param>
         private string getData(string url)
@@ -162,9 +170,7 @@ namespace Project1TransBit16
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        //finds the distance between two cities
         /// <param name="city1"></param>
         /// <param name="city2"></param>
         public void CalculateDistanceBetweenCities(CityInfo city1, CityInfo city2)
@@ -175,6 +181,7 @@ namespace Project1TransBit16
             try
             {
                 var responseBody = getData(url);
+                //converts the string to json object
                 JObject obj = JObject.Parse(responseBody);
 
                 //NOw get the distance value from the JObject
@@ -187,122 +194,144 @@ namespace Project1TransBit16
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+
+        //Returns the city with the smallest population
         /// <param name="provinceName"></param>
-        /// <returns></returns>
+        /// <returns>CityInfo</returns>
         public CityInfo DisplaySmallestPopulationCity(string provinceName)
         {
             CityInfo smallPopcity = null;
-            double population = Double.MaxValue;
-                
-            foreach (var city in CityCatalogue)
+
+            try
             {
-                if (population > city.Value.population && city.Value.admin_name.ToLower().Equals(provinceName))
+                double population = Double.MaxValue;
+
+                foreach (var city in CityCatalogue)
                 {
-                    smallPopcity = city.Value;
-                    population = city.Value.population;
+                    if (population > city.Value.population && city.Value.admin_name.ToLower().Equals(provinceName))
+                    {
+                        smallPopcity = city.Value;
+                        population = city.Value.population;
+                    }
                 }
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
             return smallPopcity;
         }
 
 
-//--Province Methods--//
-        /// <summary>
-        /// 
-        /// </summary>
+        //--Province Methods--//
+
+        ///Displays the population of the given province
         /// <param name="provinceName"></param>
-        /// <returns></returns>
+        /// <returns>population</returns>
         public double DisplayProvincePopulation(string provinceName)
         {
 
             double population = 0;
 
-            var citiesInProvince = from city in CityCatalogue
-                                   where city.Value.admin_name.ToLower().Equals(provinceName.ToLower())
-                                   select city;
-
-            foreach (var city in citiesInProvince)
+            try
             {
-                population += city.Value.population;
-            }
+                var citiesInProvince = from city in CityCatalogue
+                                       where city.Value.admin_name.ToLower().Equals(provinceName.ToLower())
+                                       select city;
 
+                foreach (var city in citiesInProvince)
+                {
+                    population += city.Value.population;
+                }
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            //returns the population
             return population;
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
+        ///Returns the list of cities in the given province
         /// <param name="provinceName"></param>
-        /// <returns></returns>
+        /// <returns>List<CityInfo></returns>
         public List<CityInfo> DisplayProvinceCities(string provinceName)
         {
-            //citycatalogue is missing 3 or 4 cities
-            var citiesInProvince = from city in CityCatalogue
-                                   where city.Value.admin_name.ToLower().Equals(provinceName)
-                                   select city;
-
-            List<CityInfo> list = new List<CityInfo>();
-            foreach (var city in citiesInProvince)
+            List<CityInfo> list = null;
+            try
             {
-                list.Add(city.Value);
+                //citycatalogue is missing 3 or 4 cities
+                var citiesInProvince = from city in CityCatalogue
+                                       where city.Value.admin_name.ToLower().Equals(provinceName)
+                                       select city;
+
+                list = new List<CityInfo>();
+                foreach (var city in citiesInProvince)
+                {
+                    list.Add(city.Value);
+                }
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
 
+            //returns the list
             return list;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+    
+         /// Ranks provinces by population   
         public void RankProvincesByPopulation()
         {
-            //get all distinct provinces from citycatalogue. result should be an enumerable of string
-            var distinctProvinces = (from city in CityCatalogue
-                                     select city.Value.admin_name).Distinct();
-
-
-            Dictionary<string, double> provinceAndPop = new Dictionary<string, double>();
-
-            //for each of the distinct provinces
-            foreach (var province in distinctProvinces)
+            try
             {
-                //get an enumerable of all the cities for that province
-                var citiesInProvince = from city in CityCatalogue
-                                       where city.Value.admin_name.Equals(province.ToString())
-                                       select city;
+                //get all distinct provinces from citycatalogue. result should be an enumerable of string
+                var distinctProvinces = (from city in CityCatalogue
+                                         select city.Value.admin_name).Distinct();
 
-                double pop = 0;
 
-                //for all the cities in the province, add population together
-                foreach (var city in citiesInProvince)
-                    pop += city.Value.population;
+                Dictionary<string, double> provinceAndPop = new Dictionary<string, double>();
 
-                //add key value pair of province and its cumulative population
-                provinceAndPop.Add(province.ToString(), pop);
-            }
+                //for each of the distinct provinces
+                foreach (var province in distinctProvinces)
+                {
+                    //get an enumerable of all the cities for that province
+                    var citiesInProvince = from city in CityCatalogue
+                                           where city.Value.admin_name.Equals(province.ToString())
+                                           select city;
 
-            //ideally we'd want to use a sorted set, but that sorts on key only. 
-            //SortedDictionary<string, double> sortedProvincesByPop = new SortedDictionary<string, double>(provinceAndPop);
-            int i = 1;
-            Console.WriteLine("Provinces ranked by population:\n");
-            String data = String.Format("{0,-5} {1,-25} {2,-10}\n","No", "City", "Population");
-            foreach (var province in provinceAndPop.OrderByDescending(key => key.Value))
+                    double pop = 0;
+
+                    //for all the cities in the province, add population together
+                    foreach (var city in citiesInProvince)
+                        pop += city.Value.population;
+
+                    //add key value pair of province and its cumulative population
+                    provinceAndPop.Add(province.ToString(), pop);
+                }
+
+                //ideally we'd want to use a sorted set, but that sorts on key only. 
+                //SortedDictionary<string, double> sortedProvincesByPop = new SortedDictionary<string, double>(provinceAndPop);
+                int i = 1;
+                Console.WriteLine("Provinces ranked by population:\n");
+                String data = String.Format("{0,-5} {1,-25} {2,-10}\n", "No", "City", "Population");
+                foreach (var province in provinceAndPop.OrderByDescending(key => key.Value))
+                {
+                    data += String.Format("{0,-5} {1,-25} {2, -10}\n",
+                   i++, province.Key, province.Value);
+                }
+                Console.WriteLine($"{data}");
+           
+            }catch(Exception ex)
             {
-                data += String.Format("{0,-5} {1,-25} {2, -10}\n",
-               i++,province.Key,province.Value);
+                Console.WriteLine(ex.Message);
             }
-            Console.WriteLine($"{data}");
 
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
+        
+        /// Ranks Provinces by number of cities it has
         public void RankProvincesByCities()
         {
             //get all distinct provinces from citycatalogue. result should be an enumerable of string
@@ -311,7 +340,6 @@ namespace Project1TransBit16
 
             Dictionary<string, int> provinceAndNumCities = new Dictionary<string, int>();
 
-            //there is probably a better performing way to do this than querying entire set for every result of our prior query... it's probably really bad time complexity
             foreach (var province in distinctProvinces)
             {
                 int citiesCountForProvince = (from city in CityCatalogue
@@ -335,24 +363,23 @@ namespace Project1TransBit16
             Console.WriteLine($"{data}");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        /// Gets the capital of the given province
         /// <param name="provinceName"></param>
-        /// <returns></returns>
+        /// <returns>CityInfo</returns>
         public CityInfo GetCapital (string provinceName)
         {
-            //!string.IsNullOrEmpty(city.Value.capital) 
-            var capital =          from city in CityCatalogue
-                                   where city.Value.admin_name.ToLower().Equals(provinceName.ToLower())
-                                            && city.Value.capital.Equals("admin")
-                                   select city.Value;
+                //!string.IsNullOrEmpty(city.Value.capital) 
+               var  capital = from city in CityCatalogue
+                              where city.Value.admin_name.ToLower().Equals(provinceName.ToLower())
+                                       && city.Value.capital.Equals("admin")
+                              select city.Value;
 
             return capital.FirstOrDefault();
         }
 
 
-//--Write Out--//
+        //--Write Out--//
+        //Writes changes to the CSV file
         public void WriteToCSV()
         {
             try
@@ -375,6 +402,7 @@ namespace Project1TransBit16
             }
         }
 
+        //Writes changes to the json file
         public void WriteToJSON()
         {
             try
@@ -393,6 +421,7 @@ namespace Project1TransBit16
             }
         }
 
+        //Writes changes to the Xml file
         public void WriteToXML()
         {
             try

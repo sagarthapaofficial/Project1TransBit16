@@ -4,7 +4,8 @@ GroupName:TransBit
 @authors: Sagar Thapa, Gordon Reaman
 ProgramName: Statistics.cs
 Date: 2022-02-22
- 
+Description: After user chooses which operation to complete, 
+            control will hand to RequestHandler to get input, validate, and acquire results through the local Statistics object.
  */
 
 using System;

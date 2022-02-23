@@ -3,7 +3,7 @@ GroupName:TransBit
 @authors: Sagar Thapa, Gordon Reaman
 ProgramName: CityPopulationChangeEvent.cs
 Date: 2022-02-22
- 
+Description: Event used to notify the user of a successful population update.
  */
 
 using System;

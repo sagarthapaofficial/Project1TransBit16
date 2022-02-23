@@ -3,7 +3,7 @@ GroupName:TransBit
 @authors: Sagar Thapa, Gordon Reaman
 ProgramName: CityInfo.cs
 Date: 2022-02-22
- 
+ Description: When data is serialized using DataModeler, it is constructed into objects of type CityInfo
  */
 
 
@@ -50,23 +50,15 @@ namespace Project1TransBit16
 
         }
 
-        //getters and setters
+        //Properties
         public string city { get; set; }
-       
         public  string  city_ascii { get; set; }
-       
         public  double lat { get; set; }
-
         public double lng { get; set; }
-      
         public  string capital { get; set; }
         public  string country { get; set; }
-       
         public  string admin_name { get; set; }
-       
-      
         public  double population { get; set; }
-       
         public  string id { get; set; }
 
         //ToString method

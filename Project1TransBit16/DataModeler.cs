@@ -4,7 +4,7 @@ GroupName:TransBit
 @authors: Sagar Thapa, Gordon Reaman
 ProgramName: DataModeler.cs
 Date: 2022-02-22
- 
+Description: Parses XML, JSON, or CSV files for Canadian city information. Serializes resulting data into CityInfo objects
  */
 
 using System;

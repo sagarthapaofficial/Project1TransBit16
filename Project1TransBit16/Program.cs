@@ -1,7 +1,9 @@
 ﻿/*
 GroupName:TransBit
 @authors: Sagar Thapa, Gordon Reaman
-ProgramName: Progarm.cs
+FileName: Program.cs
+Description: Comprises the "client" of the program. Allows user to choose which file extension source to load from (MainMenu()), choose an operation (SubMenu()),
+                and then control transfers over to RequestHandler.
 Date: 2022-02-22
  
  */
@@ -35,9 +37,9 @@ namespace Project1TransBit16
             Console.WriteLine(" to a corresponding file name, file type or data querying routine.");
             Console.WriteLine("Fetching list of available file names to be processed and queried...");
 
-            Console.WriteLine("1) Candiancities-CSV");
-            Console.WriteLine("2) Candiancities-JSON");
-            Console.WriteLine("3) Candiancities-XML");
+            Console.WriteLine("1) Canadiancities-CSV");
+            Console.WriteLine("2) Canadiancities-JSON");
+            Console.WriteLine("3) Canadiancities-XML");
             Console.WriteLine("Select an option from the list above (e.g. 1, 2");
         }
 
